@@ -9,3 +9,13 @@
 */
 
 #include "ChaosCrasher.h"
+
+void ChaosCrasher::startChaos()
+{
+    int evil = 1 / 0;
+}
+
+void ChaosCrasher::stopChaos()
+{
+    // Not applicable
+}

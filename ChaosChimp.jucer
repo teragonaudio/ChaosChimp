@@ -9,7 +9,7 @@
               pluginAUExportPrefix="ChaosChimpAU" pluginAUViewClass="ChaosChimpAU_V1"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.ChaosChimp"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.0.0"
-              companyName="Teragon Audio">
+              companyName="Teragon Audio" defines="JucePlugin_TailLengthSeconds=0">
   <MAINGROUP id="vD5tJ3" name="ChaosChimp">
     <GROUP id="{94043221-E9A0-C7FA-84F8-0F64D0047F1F}" name="Source">
       <FILE id="d9OeoF" name="ChaosAudioDropouts.cpp" compile="1" resource="0"

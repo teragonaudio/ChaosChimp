@@ -1849,6 +1849,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 				"_DEBUG=1",
 				"DEBUG=1",
+				"JucePlugin_TailLengthSeconds=0",
 				"JUCER_XCODE_MAC_F6D2F4CF=1"); }; name = Debug; };
 		2E6C854BD00BBBCC0F8FBE15 = { isa = XCBuildConfiguration; buildSettings = {
 				HEADER_SEARCH_PATHS = "../../Third-Party/vstsdk2.4 ../../JuceLibraryCode $(DEVELOPER_DIR)/Extras/CoreAudio/PublicUtility $(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/Utility $(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase $(inherited)";
@@ -1873,6 +1874,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 				"_NDEBUG=1",
 				"NDEBUG=1",
+				"JucePlugin_TailLengthSeconds=0",
 				"JUCER_XCODE_MAC_F6D2F4CF=1"); }; name = Release; };
 		62A04927D1BE07D0FA47A85D = { isa = XCBuildConfiguration; buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
