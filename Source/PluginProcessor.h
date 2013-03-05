@@ -12,6 +12,7 @@
 #define __PLUGINPROCESSOR_H_270A7CC2__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "RandomChaosExecutor.h"
 
 
 //==============================================================================
@@ -71,6 +72,9 @@ private:
         kNumParameters
     } kParameters;
 
+private:
+    RandomChaosExecutor chaosExecutor;
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChaosChimpAudioProcessor)

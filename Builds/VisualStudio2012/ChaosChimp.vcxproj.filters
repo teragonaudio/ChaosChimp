@@ -277,6 +277,9 @@
     <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>ChaosChimp\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\RandomChaosExecutor.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <Filter>Juce Modules\juce_audio_basics\buffers</Filter>
     </ClCompile>
@@ -1288,6 +1291,9 @@
       <Filter>ChaosChimp\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RandomChaosExecutor.h">
       <Filter>ChaosChimp\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h">

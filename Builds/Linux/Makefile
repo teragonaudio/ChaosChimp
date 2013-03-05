@@ -50,6 +50,7 @@ OBJECTS := \
   $(OBJDIR)/ChaosMemoryLeaker_cb2e8832.o \
   $(OBJDIR)/PluginEditor_94d4fb09.o \
   $(OBJDIR)/PluginProcessor_a059e380.o \
+  $(OBJDIR)/RandomChaosExecutor_88db8ad1.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_core_aff681cc.o \
@@ -113,6 +114,11 @@ $(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
 $(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling PluginProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/RandomChaosExecutor_88db8ad1.o: ../../Source/RandomChaosExecutor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling RandomChaosExecutor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp

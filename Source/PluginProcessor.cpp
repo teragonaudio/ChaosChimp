@@ -56,6 +56,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     for (int channel = 0; channel < getNumInputChannels(); ++channel)
     {
         float* channelData = buffer.getSampleData (channel);
+        chaosExecutor.doChaos(channelData, buffer.getNumSamples());
     }
 
     // In case we have more outputs than inputs, we'll clear any output

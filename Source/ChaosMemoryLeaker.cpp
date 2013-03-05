@@ -9,3 +9,8 @@
 */
 
 #include "ChaosMemoryLeaker.h"
+
+void ChaosMemoryLeaker::doChaos(float* channelData, int numSamples)
+{
+
+}

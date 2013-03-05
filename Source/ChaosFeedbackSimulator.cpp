@@ -9,3 +9,8 @@
 */
 
 #include "ChaosFeedbackSimulator.h"
+
+void ChaosFeedbackSimulator::doChaos(float* channelData, int numSamples)
+{
+
+}

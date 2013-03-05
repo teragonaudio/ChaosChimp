@@ -9,3 +9,8 @@
 */
 
 #include "ChaosCpuHog.h"
+
+void ChaosCpuHog::doChaos(float* channelData, int numSamples)
+{
+
+}

@@ -10,12 +10,8 @@
 
 #include "ChaosCrasher.h"
 
-void ChaosCrasher::startChaos()
+void ChaosCrasher::doChaos(float* channelData, int numSamples)
 {
+    // Yeah, this throws a compiler warning, but it's supposed to
     int evil = 1 / 0;
-}
-
-void ChaosCrasher::stopChaos()
-{
-    // Not applicable
 }

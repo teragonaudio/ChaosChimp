@@ -9,3 +9,8 @@
 */
 
 #include "ChaosAudioDropouts.h"
+
+void ChaosAudioDropouts::doChaos(float* channelData, int numSamples)
+{
+
+}

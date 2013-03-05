@@ -17,10 +17,9 @@ class ChaosCrasher : public ChaosProvider
 {
 public:
     ChaosCrasher() {}
-    virtual ~ChaosCrasher() {}
+    ~ChaosCrasher() {}
 
-    void startChaos();
-    void stopChaos();
+    void doChaos(float* channelData, int numSamples);
 };
 
 #endif  // __CHAOSCRASHER_H_F5E600A5__

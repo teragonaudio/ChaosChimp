@@ -37,6 +37,10 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="hXkAsT" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="ip5J8m" name="RandomChaosExecutor.cpp" compile="1" resource="0"
+            file="Source/RandomChaosExecutor.cpp"/>
+      <FILE id="iPB43c" name="RandomChaosExecutor.h" compile="0" resource="0"
+            file="Source/RandomChaosExecutor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
