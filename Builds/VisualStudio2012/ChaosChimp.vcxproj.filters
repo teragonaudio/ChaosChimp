@@ -256,10 +256,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
+    <ClCompile Include="..\..\Source\ChaosAudioDropouts.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChaosCpuHog.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChaosCrasher.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChaosFeedbackSimulator.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChaosMemoryLeaker.cpp">
       <Filter>ChaosChimp\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>ChaosChimp\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
@@ -1251,10 +1266,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\PluginProcessor.h">
+    <ClInclude Include="..\..\Source\ChaosAudioDropouts.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChaosCpuHog.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChaosCrasher.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChaosFeedbackSimulator.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChaosMemoryLeaker.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChaosProvider.h">
       <Filter>ChaosChimp\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">
+      <Filter>ChaosChimp\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>ChaosChimp\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h">

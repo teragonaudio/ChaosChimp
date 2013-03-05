@@ -43,8 +43,13 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/PluginProcessor_a059e380.o \
+  $(OBJDIR)/ChaosAudioDropouts_5e69c933.o \
+  $(OBJDIR)/ChaosCpuHog_22c0cb79.o \
+  $(OBJDIR)/ChaosCrasher_8956097d.o \
+  $(OBJDIR)/ChaosFeedbackSimulator_ba56a668.o \
+  $(OBJDIR)/ChaosMemoryLeaker_cb2e8832.o \
   $(OBJDIR)/PluginEditor_94d4fb09.o \
+  $(OBJDIR)/PluginProcessor_a059e380.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_core_aff681cc.o \
@@ -75,14 +80,39 @@ strip:
 	@echo Stripping ChaosChimp
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
-$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+$(OBJDIR)/ChaosAudioDropouts_5e69c933.o: ../../Source/ChaosAudioDropouts.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginProcessor.cpp"
+	@echo "Compiling ChaosAudioDropouts.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ChaosCpuHog_22c0cb79.o: ../../Source/ChaosCpuHog.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ChaosCpuHog.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ChaosCrasher_8956097d.o: ../../Source/ChaosCrasher.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ChaosCrasher.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ChaosFeedbackSimulator_ba56a668.o: ../../Source/ChaosFeedbackSimulator.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ChaosFeedbackSimulator.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ChaosMemoryLeaker_cb2e8832.o: ../../Source/ChaosMemoryLeaker.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ChaosMemoryLeaker.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling PluginEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PluginProcessor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp

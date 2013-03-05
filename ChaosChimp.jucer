@@ -12,13 +12,31 @@
               companyName="Teragon Audio">
   <MAINGROUP id="vD5tJ3" name="ChaosChimp">
     <GROUP id="{94043221-E9A0-C7FA-84F8-0F64D0047F1F}" name="Source">
+      <FILE id="d9OeoF" name="ChaosAudioDropouts.cpp" compile="1" resource="0"
+            file="Source/ChaosAudioDropouts.cpp"/>
+      <FILE id="cI1X3S" name="ChaosAudioDropouts.h" compile="0" resource="0"
+            file="Source/ChaosAudioDropouts.h"/>
+      <FILE id="MCSt8X" name="ChaosCpuHog.cpp" compile="1" resource="0" file="Source/ChaosCpuHog.cpp"/>
+      <FILE id="e1Qzfz" name="ChaosCpuHog.h" compile="0" resource="0" file="Source/ChaosCpuHog.h"/>
+      <FILE id="b9FnAd" name="ChaosCrasher.cpp" compile="1" resource="0"
+            file="Source/ChaosCrasher.cpp"/>
+      <FILE id="HnWYgK" name="ChaosCrasher.h" compile="0" resource="0" file="Source/ChaosCrasher.h"/>
+      <FILE id="HsKPXz" name="ChaosFeedbackSimulator.cpp" compile="1" resource="0"
+            file="Source/ChaosFeedbackSimulator.cpp"/>
+      <FILE id="SnZ2ij" name="ChaosFeedbackSimulator.h" compile="0" resource="0"
+            file="Source/ChaosFeedbackSimulator.h"/>
+      <FILE id="BvNM3x" name="ChaosMemoryLeaker.cpp" compile="1" resource="0"
+            file="Source/ChaosMemoryLeaker.cpp"/>
+      <FILE id="UuzuWb" name="ChaosMemoryLeaker.h" compile="0" resource="0"
+            file="Source/ChaosMemoryLeaker.h"/>
+      <FILE id="cHaL7s" name="ChaosProvider.h" compile="0" resource="0" file="Source/ChaosProvider.h"/>
+      <FILE id="PlhM0r" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="A5ZOEQ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="PjXSXL" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="hXkAsT" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="PlhM0r" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="A5ZOEQ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
