@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2012
+Project("{CB38072C-F8D1-3A91-DC97-6BD8DA32097E}") = "ChaosChimp", "ChaosChimp.vcxproj", "{CD461995-FFFA-7899-02DB-B78AF2C279F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD461995-FFFA-7899-02DB-B78AF2C279F6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD461995-FFFA-7899-02DB-B78AF2C279F6}.Debug|Win32.Build.0 = Debug|Win32
+		{CD461995-FFFA-7899-02DB-B78AF2C279F6}.Release|Win32.ActiveCfg = Release|Win32
+		{CD461995-FFFA-7899-02DB-B78AF2C279F6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
