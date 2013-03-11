@@ -18,6 +18,7 @@ public:
     virtual ~ChaosProvider() {}
 
     virtual void doChaos(float *channelData, int numSamples) = 0;
+    virtual void reset() {};
 };
 
 #endif  // __CHAOSPROVIDER_H_7D39C974__

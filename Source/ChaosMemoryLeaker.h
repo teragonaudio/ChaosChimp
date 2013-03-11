@@ -10,6 +10,8 @@
 
 #ifndef __CHAOSMEMORYLEAKER_H_AE8FCAB4__
 #define __CHAOSMEMORYLEAKER_H_AE8FCAB4__
+
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "ChaosProvider.h"
 
 class ChaosMemoryLeaker : public ChaosProvider
@@ -19,6 +21,10 @@ public:
     ~ChaosMemoryLeaker() {}
 
     void doChaos(float* channelData, int numSamples);
+    void reset();
+
+private:
+    Array<void*> junk;
 };
 
 #endif  // __CHAOSMEMORYLEAKER_H_AE8FCAB4__

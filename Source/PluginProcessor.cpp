@@ -68,6 +68,8 @@ void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders()
 
 void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    // If the input signal is silent, then don't do any evil things. This could, for instance,
+    // cause the host to crash when the user is configuring the plugin.
     bool inputIsSilent = true;
     float* channelData = buffer.getSampleData(0);
     for (int i = 0; i < buffer.getNumSamples(); ++i) {
@@ -77,6 +79,12 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
         }
     }
 
+    // Reset plugin state if necessary
+    if (inputIsSilent && pluginState != kStateSilence) {
+        pluginState = kStateSilence;
+    }
+
+    // Take action depending on the current state
     switch (pluginState) {
         case kStateSilence:
             if (!inputIsSilent) {
@@ -99,6 +107,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
         case kStateCausingChaos:
             currentStateSample += buffer.getNumSamples();
             if (currentStateSample > durationInSamples) {
+                currentChaosProvider->reset();
                 currentChaosProvider = nullptr;
                 currentStateSample = 0;
                 pluginState = kStateCooldown;
@@ -108,7 +117,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             currentStateSample += buffer.getNumSamples();
             if (currentStateSample > cooldownInSamples) {
                 currentStateSample = 0;
-                pluginState = kStateSilence;
+                pluginState = kStateAudioPlaying;
             }
             break;
         default:
