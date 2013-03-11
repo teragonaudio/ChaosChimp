@@ -571,7 +571,7 @@ public:
     /** Creates a stream to read from this file.
 
         @returns    a stream that will read from this file (initially positioned at the
-                    start of the file), or 0 if the file can't be opened for some reason
+                    start of the file), or nullptr if the file can't be opened for some reason
         @see createOutputStream, loadFileAsData
     */
     FileInputStream* createInputStream() const;
@@ -583,7 +583,7 @@ public:
         to write to an empty file.
 
         @returns    a stream that will write to this file (initially positioned at the
-                    end of the file), or 0 if the file can't be opened for some reason
+                    end of the file), or nullptr if the file can't be opened for some reason
         @see createInputStream, appendData, appendText
     */
     FileOutputStream* createOutputStream (int bufferSize = 0x8000) const;
@@ -623,7 +623,7 @@ public:
         @returns false if it can't write to the file for some reason
     */
     bool appendData (const void* dataToAppend,
-                     int numberOfBytes) const;
+                     size_t numberOfBytes) const;
 
     /** Replaces this file's contents with a given block of data.
 
@@ -640,7 +640,7 @@ public:
         @see appendText
     */
     bool replaceWithData (const void* dataToWrite,
-                          int numberOfBytes) const;
+                          size_t numberOfBytes) const;
 
     /** Appends a string to the end of the file.
 

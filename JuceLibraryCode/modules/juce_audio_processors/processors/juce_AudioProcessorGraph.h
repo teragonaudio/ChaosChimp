@@ -321,6 +321,7 @@ public:
         bool isInputChannelStereoPair (int index) const;
         bool isOutputChannelStereoPair (int index) const;
         bool silenceInProducesSilenceOut() const;
+        double getTailLengthSeconds() const;
         bool acceptsMidi() const;
         bool producesMidi() const;
 
@@ -360,12 +361,14 @@ public:
     void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock);
     void releaseResources();
     void processBlock (AudioSampleBuffer&, MidiBuffer&);
+    void reset();
 
     const String getInputChannelName (int channelIndex) const;
     const String getOutputChannelName (int channelIndex) const;
     bool isInputChannelStereoPair (int index) const;
     bool isOutputChannelStereoPair (int index) const;
     bool silenceInProducesSilenceOut() const;
+    double getTailLengthSeconds() const;
 
     bool acceptsMidi() const;
     bool producesMidi() const;
@@ -395,8 +398,6 @@ private:
     uint32 lastNodeId;
     AudioSampleBuffer renderingBuffers;
     OwnedArray <MidiBuffer> midiBuffers;
-
-    CriticalSection renderLock;
     Array<void*> renderingOps;
 
     friend class AudioGraphIOProcessor;

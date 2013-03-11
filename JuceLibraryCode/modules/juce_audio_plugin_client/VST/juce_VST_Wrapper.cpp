@@ -262,9 +262,9 @@ class JuceVSTWrapper  : public AudioEffectX,
 {
 public:
     //==============================================================================
-    JuceVSTWrapper (audioMasterCallback audioMaster, AudioProcessor* const filter_)
-       : AudioEffectX (audioMaster, filter_->getNumPrograms(), filter_->getNumParameters()),
-         filter (filter_),
+    JuceVSTWrapper (audioMasterCallback audioMaster, AudioProcessor* const af)
+       : AudioEffectX (audioMaster, af->getNumPrograms(), af->getNumParameters()),
+         filter (af),
          chunkMemoryTime (0),
          speakerIn (kSpeakerArrEmpty),
          speakerOut (kSpeakerArrEmpty),
@@ -292,7 +292,7 @@ public:
         canProcessReplacing (true);
 
         isSynth ((JucePlugin_IsSynth) != 0);
-        noTail (((JucePlugin_SilenceInProducesSilenceOut) != 0) && (JucePlugin_TailLengthSeconds <= 0));
+        noTail (filter->getTailLengthSeconds() <= 0);
         setInitialDelay (filter->getLatencySamples());
         programsAreChunks (true);
 
@@ -313,7 +313,7 @@ public:
             hasShutdown = true;
 
             delete filter;
-            filter = 0;
+            filter = nullptr;
 
             jassert (editorComp == 0);
 
@@ -436,8 +436,8 @@ public:
     static void setPinProperties (VstPinProperties& properties, const String& name,
                                   VstSpeakerArrangementType type, const bool isPair)
     {
-        name.copyToUTF8 (properties.label, kVstMaxLabelLen - 1);
-        name.copyToUTF8 (properties.shortLabel, kVstMaxShortLabelLen - 1);
+        name.copyToUTF8 (properties.label, (size_t) (kVstMaxLabelLen - 1));
+        name.copyToUTF8 (properties.shortLabel, (size_t) (kVstMaxShortLabelLen - 1));
 
         if (type != kSpeakerArrEmpty)
         {
@@ -458,6 +458,14 @@ public:
     {
         isBypassed = b;
         return true;
+    }
+
+    VstInt32 getGetTailSize()
+    {
+        if (filter != nullptr)
+            return (VstInt32) (filter->getTailLengthSeconds() * getSampleRate());
+
+        return 0;
     }
 
     //==============================================================================
@@ -526,7 +534,7 @@ public:
             if (filter->isSuspended())
             {
                 for (int i = 0; i < numOut; ++i)
-                    zeromem (outputs[i], sizeof (float) * (size_t) numSamples);
+                    FloatVectorOperations::clear (outputs[i], numSamples);
             }
             else
             {
@@ -698,7 +706,7 @@ public:
             info.timeSigDenominator = 4;
         }
 
-        info.timeInSamples = (int64) ti->samplePos;
+        info.timeInSamples = (int64) (ti->samplePos + 0.5);
         info.timeInSeconds = ti->samplePos / ti->sampleRate;
         info.ppqPosition = (ti->flags & kVstPpqPosValid) != 0 ? ti->ppqPos : 0.0;
         info.ppqPositionOfLastBarStart = (ti->flags & kVstBarsValid) != 0 ? ti->barStartPos : 0.0;
@@ -1172,10 +1180,8 @@ public:
 
                 return (VstIntPtr) (pointer_sized_int) &editorSize;
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         return AudioEffectX::dispatcher (opCode, index, value, ptr, opt);
@@ -1258,8 +1264,8 @@ public:
                                public AsyncUpdater
     {
     public:
-        EditorCompWrapper (JuceVSTWrapper& wrapper_, AudioProcessorEditor* editor)
-            : wrapper (wrapper_)
+        EditorCompWrapper (JuceVSTWrapper& w, AudioProcessorEditor* editor)
+            : wrapper (w)
         {
             setOpaque (true);
             editor->setOpaque (true);
@@ -1396,10 +1402,14 @@ private:
 
     static inline VstInt32 convertHexVersionToDecimal (const unsigned int hexVersion)
     {
+       #if JUCE_VST_RETURN_HEX_VERSION_NUMBER_DIRECTLY
+        return (VstInt32) hexVersion;
+       #else
         return (VstInt32) (((hexVersion >> 24) & 0xff) * 1000
-                           + ((hexVersion >> 16) & 0xff) * 100
-                           + ((hexVersion >> 8)  & 0xff) * 10
-                           + (hexVersion & 0xff));
+                         + ((hexVersion >> 16) & 0xff) * 100
+                         + ((hexVersion >> 8)  & 0xff) * 10
+                         + (hexVersion & 0xff));
+       #endif
     }
 
     //==============================================================================
@@ -1416,7 +1426,7 @@ private:
                 class MessageThreadCallback  : public CallbackMessage
                 {
                 public:
-                    MessageThreadCallback (bool& triggered_) : triggered (triggered_) {}
+                    MessageThreadCallback (bool& tr) : triggered (tr) {}
 
                     void messageCallback()
                     {

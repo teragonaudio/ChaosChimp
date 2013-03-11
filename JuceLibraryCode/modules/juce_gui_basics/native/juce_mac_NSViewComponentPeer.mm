@@ -204,6 +204,23 @@ public:
             [window setTitle: juceStringToNS (title)];
     }
 
+    bool setDocumentEditedStatus (bool edited)
+    {
+        if (! hasNativeTitleBar())
+            return false;
+
+        [window setDocumentEdited: edited];
+        return true;
+    }
+
+    void setRepresentedFile (const File& file)
+    {
+        if (! isSharedWindow)
+            [window setRepresentedFilename: juceStringToNS (file != File::nonexistent
+                                                                ? file.getFullPathName()
+                                                                : String::empty)];
+    }
+
     void setPosition (int x, int y)
     {
         setBounds (x, y, component.getWidth(), component.getHeight(), false);
@@ -520,19 +537,23 @@ public:
 
     void redirectMouseMove (NSEvent* ev)
     {
-       #if defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
-        if ([NSWindow windowNumberAtPoint: [[ev window] convertBaseToScreen: [ev locationInWindow]]
-              belowWindowWithWindowNumber: 0] != [window windowNumber])
+        currentModifiers = currentModifiers.withoutMouseButtons();
+
+       #if defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+        if ([NSWindow respondsToSelector: @selector (windowNumberAtPoint:belowWindowWithWindowNumber:)]
+             && [NSWindow windowNumberAtPoint: [[ev window] convertBaseToScreen: [ev locationInWindow]]
+                  belowWindowWithWindowNumber: 0] != [window windowNumber])
         {
-            [[NSCursor arrowCursor] set];
+            // moved into another window which overlaps this one, so trigger an exit
+            handleMouseEvent (0, Point<int> (-1, -1), currentModifiers, getMouseTime (ev));
         }
         else
        #endif
         {
-            currentModifiers = currentModifiers.withoutMouseButtons();
             sendMouseEvent (ev);
-            showArrowCursorIfNeeded();
         }
+
+        showArrowCursorIfNeeded();
     }
 
     void redirectMouseEnter (NSEvent* ev)
@@ -884,10 +905,11 @@ public:
 
     static void showArrowCursorIfNeeded()
     {
-        MouseInputSource& mouse = Desktop::getInstance().getMainMouseSource();
+        Desktop& desktop = Desktop::getInstance();
+        MouseInputSource& mouse = desktop.getMainMouseSource();
 
         if (mouse.getComponentUnderMouse() == nullptr
-             && Desktop::getInstance().findComponentAt (mouse.getScreenPosition()) == nullptr)
+             && desktop.findComponentAt (mouse.getScreenPosition()) == nullptr)
         {
             [[NSCursor arrowCursor] set];
         }
@@ -1518,9 +1540,11 @@ private:
 
     static NSRange markedRange (id self, SEL)
     {
-        NSViewComponentPeer* const owner = getOwner (self);
-        return owner->stringBeingComposed.isNotEmpty() ? NSMakeRange (0, (NSUInteger) owner->stringBeingComposed.length())
-                                                       : NSMakeRange (NSNotFound, 0);
+        if (NSViewComponentPeer* const owner = getOwner (self))
+            if (owner->stringBeingComposed.isNotEmpty())
+                return NSMakeRange (0, (NSUInteger) owner->stringBeingComposed.length());
+
+        return NSMakeRange (NSNotFound, 0);
     }
 
     static NSRange selectedRange (id self, SEL)
@@ -1571,10 +1595,9 @@ private:
     #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
     static BOOL performKeyEquivalent (id self, SEL, NSEvent* ev)
     {
-        NSViewComponentPeer* const owner = getOwner (self);
-
-        if (owner != nullptr && owner->redirectPerformKeyEquivalent (ev))
-            return true;
+        if (NSViewComponentPeer* const owner = getOwner (self))
+            if (owner->redirectPerformKeyEquivalent (ev))
+                return true;
 
         objc_super s = { self, [NSView class] };
         return objc_msgSendSuper (&s, @selector (performKeyEquivalent:), ev) != nil;
@@ -1611,12 +1634,11 @@ private:
 
     static NSDragOperation draggingUpdated (id self, SEL, id <NSDraggingInfo> sender)
     {
-        NSViewComponentPeer* const owner = getOwner (self);
+        if (NSViewComponentPeer* const owner = getOwner (self))
+            if (owner->sendDragCallback (0, sender))
+                return NSDragOperationCopy | NSDragOperationMove | NSDragOperationGeneric;
 
-        if (owner != nullptr && owner->sendDragCallback (0, sender))
-            return NSDragOperationCopy | NSDragOperationMove | NSDragOperationGeneric;
-        else
-            return NSDragOperationNone;
+        return NSDragOperationNone;
     }
 
     static void draggingEnded (id self, SEL s, id <NSDraggingInfo> sender)
@@ -1630,7 +1652,7 @@ private:
             owner->sendDragCallback (1, sender);
     }
 
-    static BOOL prepareForDragOperation (id self, SEL, id <NSDraggingInfo>)
+    static BOOL prepareForDragOperation (id, SEL, id <NSDraggingInfo>)
     {
         return YES;
     }
@@ -1738,10 +1760,9 @@ private:
 
     static void windowWillMove (id self, SEL, NSNotification*)
     {
-        NSViewComponentPeer* const owner = getOwner (self);
-
-        if (owner != nullptr && owner->hasNativeTitleBar())
-            owner->sendModalInputAttemptIfBlocked();
+        if (NSViewComponentPeer* const owner = getOwner (self))
+            if (owner->hasNativeTitleBar())
+                owner->sendModalInputAttemptIfBlocked();
     }
 };
 
@@ -1798,9 +1819,15 @@ void ModifierKeys::updateCurrentModifiers() noexcept
 
 
 //==============================================================================
-void Desktop::createMouseInputSources()
+bool Desktop::addMouseInputSource()
 {
-    mouseSources.add (new MouseInputSource (0, true));
+    if (mouseSources.size() == 0)
+    {
+        mouseSources.add (new MouseInputSource (0, true));
+        return true;
+    }
+
+    return false;
 }
 
 //==============================================================================
@@ -1843,6 +1870,8 @@ void Desktop::setKioskComponent (Component* kioskComp, bool enableOrDisable, boo
         }
     }
    #elif JUCE_SUPPORT_CARBON
+    (void) kioskComp; (void) enableOrDisable; (void) allowMenusAndBars;
+
     if (enableOrDisable)
     {
         SetSystemUIMode (kUIModeAllSuppressed, allowMenusAndBars ? kUIOptionAutoShowMenuBar : 0);
@@ -1853,6 +1882,8 @@ void Desktop::setKioskComponent (Component* kioskComp, bool enableOrDisable, boo
         SetSystemUIMode (kUIModeNormal, 0);
     }
    #else
+    (void) kioskComp; (void) enableOrDisable; (void) allowMenusAndBars;
+
     // If you're targeting OSes earlier than 10.6 and want to use this feature,
     // you'll need to enable JUCE_SUPPORT_CARBON.
     jassertfalse;

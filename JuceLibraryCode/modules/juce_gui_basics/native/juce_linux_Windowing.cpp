@@ -1519,41 +1519,13 @@ public:
     void handleMotionNotifyEvent (const XPointerMovedEvent& movedEvent)
     {
         updateKeyModifiers (movedEvent.state);
-        const Point<int> mousePos (movedEvent.x_root, movedEvent.y_root);
 
-        if (lastMousePos != mousePos)
-        {
-            lastMousePos = mousePos;
+        lastMousePos = Point<int> (movedEvent.x_root, movedEvent.y_root);
 
-            if (parentWindow != 0 && (styleFlags & windowHasTitleBar) == 0)
-            {
-                Window wRoot = 0, wParent = 0;
+        if (dragState.dragging)
+            handleExternalDragMotionNotify();
 
-                {
-                    ScopedXLock xlock;
-                    unsigned int numChildren;
-                    Window* wChild = nullptr;
-                    XQueryTree (display, windowH, &wRoot, &wParent, &wChild, &numChildren);
-                }
-
-                if (wParent != 0
-                     && wParent != windowH
-                     && wParent != wRoot)
-                {
-                    parentWindow = wParent;
-                    updateBounds();
-                }
-                else
-                {
-                    parentWindow = 0;
-                }
-            }
-
-            if (dragState.dragging)
-                handleExternalDragMotionNotify();
-
-            handleMouseEvent (0, mousePos - getScreenPosition(), currentModifiers, getEventTime (movedEvent));
-        }
+        handleMouseEvent (0, getMousePos (movedEvent), currentModifiers, getEventTime (movedEvent));
     }
 
     void handleEnterNotifyEvent (const XEnterWindowEvent& enterEvent)
@@ -3086,9 +3058,15 @@ void Desktop::Displays::findDisplays()
 }
 
 //==============================================================================
-void Desktop::createMouseInputSources()
+bool Desktop::addMouseInputSource()
 {
-    mouseSources.add (new MouseInputSource (0, true));
+    if (mouseSources.size() == 0)
+    {
+        mouseSources.add (new MouseInputSource (0, true));
+        return true;
+    }
+
+    return false;
 }
 
 bool Desktop::canUseSemiTransparentWindows() noexcept
@@ -3408,9 +3386,10 @@ void JUCE_CALLTYPE NativeMessageBox::showMessageBox (AlertWindow::AlertIconType 
 
 void JUCE_CALLTYPE NativeMessageBox::showMessageBoxAsync (AlertWindow::AlertIconType iconType,
                                                           const String& title, const String& message,
-                                                          Component* /* associatedComponent */)
+                                                          Component* associatedComponent,
+                                                          ModalComponentManager::Callback* callback)
 {
-    AlertWindow::showMessageBoxAsync (iconType, title, message);
+    AlertWindow::showMessageBoxAsync (iconType, title, message, String::empty, associatedComponent, callback);
 }
 
 bool JUCE_CALLTYPE NativeMessageBox::showOkCancelBox (AlertWindow::AlertIconType iconType,

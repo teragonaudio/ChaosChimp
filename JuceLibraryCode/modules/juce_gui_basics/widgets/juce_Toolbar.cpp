@@ -175,9 +175,7 @@ public:
         {
             for (int i = 0; i < getNumChildComponents(); ++i)
             {
-                ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (getChildComponent (i));
-
-                if (tc != nullptr)
+                if (ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (getChildComponent (i)))
                 {
                     tc->setVisible (false);
                     const int index = oldIndexes.remove (i);
@@ -199,9 +197,7 @@ public:
 
         for (int i = 0; i < getNumChildComponents(); ++i)
         {
-            ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (getChildComponent (i));
-
-            if (tc != nullptr)
+            if (ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (getChildComponent (i)))
             {
                 int preferredSize = 1, minSize = 1, maxSize = 1;
 
@@ -273,12 +269,9 @@ void Toolbar::clear()
 
 ToolbarItemComponent* Toolbar::createItem (ToolbarItemFactory& factory, const int itemId)
 {
-    if (itemId == ToolbarItemFactory::separatorBarId)
-        return new Spacer (itemId, 0.1f, true);
-    else if (itemId == ToolbarItemFactory::spacerId)
-        return new Spacer (itemId, 0.5f, false);
-    else if (itemId == ToolbarItemFactory::flexibleSpacerId)
-        return new Spacer (itemId, 0, false);
+    if (itemId == ToolbarItemFactory::separatorBarId)    return new Spacer (itemId, 0.1f, true);
+    if (itemId == ToolbarItemFactory::spacerId)          return new Spacer (itemId, 0.5f, false);
+    if (itemId == ToolbarItemFactory::flexibleSpacerId)  return new Spacer (itemId, 0.0f, false);
 
     return factory.createItem (itemId);
 }
@@ -290,18 +283,16 @@ void Toolbar::addItemInternal (ToolbarItemFactory& factory,
     // An ID can't be zero - this might indicate a mistake somewhere?
     jassert (itemId != 0);
 
-    ToolbarItemComponent* const tc = createItem (factory, itemId);
-
-    if (tc != nullptr)
+    if (ToolbarItemComponent* const tc = createItem (factory, itemId))
     {
-#if JUCE_DEBUG
+       #if JUCE_DEBUG
         Array <int> allowedIds;
         factory.getAllToolbarItemIds (allowedIds);
 
         // If your factory can create an item for a given ID, it must also return
         // that ID from its getAllToolbarItemIds() method!
         jassert (allowedIds.contains (itemId));
-#endif
+       #endif
 
         items.insert (insertIndex, tc);
         addAndMakeVisible (tc, insertIndex);
@@ -342,8 +333,10 @@ int Toolbar::getNumItems() const noexcept
 
 int Toolbar::getItemId (const int itemIndex) const noexcept
 {
-    ToolbarItemComponent* const tc = getItemComponent (itemIndex);
-    return tc != nullptr ? tc->getItemId() : 0;
+    if (ToolbarItemComponent* const tc = getItemComponent (itemIndex))
+        return tc->getItemId();
+
+    return 0;
 }
 
 ToolbarItemComponent* Toolbar::getItemComponent (const int itemIndex) const noexcept
@@ -356,16 +349,17 @@ ToolbarItemComponent* Toolbar::getNextActiveComponent (int index, const int delt
     for (;;)
     {
         index += delta;
-        ToolbarItemComponent* const tc = getItemComponent (index);
 
-        if (tc == nullptr)
-            break;
-
-        if (tc->isActive)
-            return tc;
+        if (ToolbarItemComponent* const tc = getItemComponent (index))
+        {
+            if (tc->isActive)
+                return tc;
+        }
+        else
+        {
+            return nullptr;
+        }
     }
-
-    return nullptr;
 }
 
 void Toolbar::setStyle (const ToolbarItemStyle& newStyle)
@@ -548,17 +542,13 @@ bool Toolbar::isInterestedInDragSource (const SourceDetails& dragSourceDetails)
 
 void Toolbar::itemDragMove (const SourceDetails& dragSourceDetails)
 {
-    ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get());
-
-    if (tc != nullptr)
+    if (ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get()))
     {
         if (! items.contains (tc))
         {
             if (tc->getEditingMode() == ToolbarItemComponent::editableOnPalette)
             {
-                ToolbarItemPalette* const palette = tc->findParentComponentOfClass<ToolbarItemPalette>();
-
-                if (palette != nullptr)
+                if (ToolbarItemPalette* const palette = tc->findParentComponentOfClass<ToolbarItemPalette>())
                     palette->replaceComponent (tc);
             }
             else
@@ -582,9 +572,8 @@ void Toolbar::itemDragMove (const SourceDetails& dragSourceDetails)
 
             const Rectangle<int> current (Desktop::getInstance().getAnimator()
                                             .getComponentDestination (getChildComponent (newIndex)));
-            ToolbarItemComponent* const prev = getNextActiveComponent (newIndex, -1);
 
-            if (prev != nullptr)
+            if (ToolbarItemComponent* const prev = getNextActiveComponent (newIndex, -1))
             {
                 const Rectangle<int> previousPos (Desktop::getInstance().getAnimator().getComponentDestination (prev));
 
@@ -595,8 +584,7 @@ void Toolbar::itemDragMove (const SourceDetails& dragSourceDetails)
                 }
             }
 
-            ToolbarItemComponent* const next = getNextActiveComponent (newIndex, 1);
-            if (next != nullptr)
+            if (ToolbarItemComponent* const next = getNextActiveComponent (newIndex, 1))
             {
                 const Rectangle<int> nextPos (Desktop::getInstance().getAnimator().getComponentDestination (next));
 
@@ -621,21 +609,20 @@ void Toolbar::itemDragMove (const SourceDetails& dragSourceDetails)
 
 void Toolbar::itemDragExit (const SourceDetails& dragSourceDetails)
 {
-    ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get());
-
-    if (tc != nullptr && isParentOf (tc))
+    if (ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get()))
     {
-        items.removeObject (tc, false);
-        removeChildComponent (tc);
-        updateAllItemPositions (true);
+        if (isParentOf (tc))
+        {
+            items.removeObject (tc, false);
+            removeChildComponent (tc);
+            updateAllItemPositions (true);
+        }
     }
 }
 
 void Toolbar::itemDropped (const SourceDetails& dragSourceDetails)
 {
-    ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get());
-
-    if (tc != nullptr)
+    if (ToolbarItemComponent* const tc = dynamic_cast <ToolbarItemComponent*> (dragSourceDetails.sourceComponent.get()))
         tc->setState (Button::buttonNormal);
 }
 
@@ -784,9 +771,7 @@ private:
         {
             Colour background;
 
-            DialogWindow* const dw = findParentComponentOfClass<DialogWindow>();
-
-            if (dw != nullptr)
+            if (DialogWindow* const dw = findParentComponentOfClass<DialogWindow>())
                 background = dw->getBackgroundColour();
 
             g.setColour (background.contrasting().withAlpha (0.3f));

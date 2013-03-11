@@ -74,7 +74,7 @@ public:
     ImageType* createType() const    { return new NativeImageType(); }
 
     //==============================================================================
-    static CGImageRef createImage (const Image& juceImage, const bool forAlpha,
+    static CGImageRef createImage (const Image& juceImage, const bool /*forAlpha*/,
                                    CGColorSpaceRef colourSpace, const bool mustOutliveSource)
     {
         const Image::BitmapData srcData (juceImage, Image::BitmapData::readOnly);
@@ -860,9 +860,11 @@ CGImageRef juce_createCoreGraphicsImage (const Image& juceImage, const bool forA
 
 CGContextRef juce_getImageContext (const Image& image)
 {
-    CoreGraphicsImage* const cgi = dynamic_cast <CoreGraphicsImage*> (image.getPixelData());
-    jassert (cgi != nullptr);
-    return cgi != nullptr ? cgi->context : 0;
+    if (CoreGraphicsImage* const cgi = dynamic_cast <CoreGraphicsImage*> (image.getPixelData()))
+        return cgi->context;
+
+    jassertfalse;
+    return 0;
 }
 
 #endif

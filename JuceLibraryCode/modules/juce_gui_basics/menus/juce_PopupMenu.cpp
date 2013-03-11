@@ -1256,14 +1256,14 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NormalComponentWrapper)
 };
 
-void PopupMenu::addCustomItem (const int itemResultID, CustomComponent* const customComponent)
+void PopupMenu::addCustomItem (const int itemID, CustomComponent* const cc, const PopupMenu* subMenu)
 {
-    jassert (itemResultID != 0);    // 0 is used as a return value to indicate that the user
-                                    // didn't pick anything, so you shouldn't use it as the id
-                                    // for an item..
+    jassert (itemID != 0);    // 0 is used as a return value to indicate that the user
+                              // didn't pick anything, so you shouldn't use it as the id
+                              // for an item..
 
-    items.add (new Item (itemResultID, String::empty, true, false, Image::null,
-                         Colours::black, false, customComponent, nullptr, nullptr));
+    items.add (new Item (itemID, String::empty, true, false, Image::null,
+                         Colours::black, false, cc, subMenu, nullptr));
 }
 
 void PopupMenu::addCustomItem (const int itemResultID,
@@ -1602,9 +1602,9 @@ void PopupMenu::setLookAndFeel (LookAndFeel* const newLookAndFeel)
 }
 
 //==============================================================================
-PopupMenu::CustomComponent::CustomComponent (const bool isTriggeredAutomatically)
+PopupMenu::CustomComponent::CustomComponent (bool autoTrigger)
     : isHighlighted (false),
-      triggeredAutomatically (isTriggeredAutomatically)
+      triggeredAutomatically (autoTrigger)
 {
 }
 

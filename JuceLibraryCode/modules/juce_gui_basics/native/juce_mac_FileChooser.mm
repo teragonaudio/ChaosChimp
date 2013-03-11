@@ -84,70 +84,25 @@ private:
     }
 };
 
-//==============================================================================
-class TemporaryMainMenuWithStandardCommands
+static NSMutableArray* createAllowedTypesArray (const StringArray& filters)
 {
-public:
-    TemporaryMainMenuWithStandardCommands()
-        : oldMenu (MenuBarModel::getMacMainMenu()), oldAppleMenu (nullptr)
+    if (filters.size() == 0)
+        return nil;
+
+    NSMutableArray* filterArray = [[[NSMutableArray alloc] init] autorelease];
+
+    for (int i = 0; i < filters.size(); ++i)
     {
-        const PopupMenu* appleMenu = MenuBarModel::getMacExtraAppleItemsMenu();
-        if (appleMenu != nullptr)
-            oldAppleMenu = new PopupMenu (*appleMenu);
+        const String f (filters[i].replace ("*.", ""));
 
-        MenuBarModel::setMacMainMenu (nullptr);
+        if (f == "*")
+            return nil;
 
-        NSMenu* menu = [[NSMenu alloc] initWithTitle: nsStringLiteral ("Edit")];
-        NSMenuItem* item;
-
-        item = [[NSMenuItem alloc] initWithTitle: NSLocalizedString (nsStringLiteral ("Cut"), nil)
-                                          action: @selector (cut:)  keyEquivalent: nsStringLiteral ("x")];
-        [menu addItem: item];
-        [item release];
-
-        item = [[NSMenuItem alloc] initWithTitle: NSLocalizedString (nsStringLiteral ("Copy"), nil)
-                                          action: @selector (copy:)  keyEquivalent: nsStringLiteral ("c")];
-        [menu addItem: item];
-        [item release];
-
-        item = [[NSMenuItem alloc] initWithTitle: NSLocalizedString (nsStringLiteral ("Paste"), nil)
-                                          action: @selector (paste:)  keyEquivalent: nsStringLiteral ("v")];
-        [menu addItem: item];
-        [item release];
-
-        item = [[NSApp mainMenu] addItemWithTitle: NSLocalizedString (nsStringLiteral ("Edit"), nil)
-                                          action: nil  keyEquivalent: nsEmptyString()];
-        [[NSApp mainMenu] setSubmenu: menu forItem: item];
-        [menu release];
-
-        // use a dummy modal component so that apps can tell that something is currently modal.
-        dummyModalComponent.enterModalState();
+        [filterArray addObject: juceStringToNS (f)];
     }
 
-    ~TemporaryMainMenuWithStandardCommands()
-    {
-        MenuBarModel::setMacMainMenu (oldMenu, oldAppleMenu);
-    }
-
-private:
-    MenuBarModel* oldMenu;
-    ScopedPointer<PopupMenu> oldAppleMenu;
-
-    // The OS view already plays an alert when clicking outside
-    // the modal comp, so this override avoids adding extra
-    // inappropriate noises when the cancel button is pressed.
-    // This override is also important because it stops the base class
-    // calling ModalComponentManager::bringToFront, which can get
-    // recursive when file dialogs are involved
-    class SilentDummyModalComp  : public Component
-    {
-    public:
-        SilentDummyModalComp() {}
-        void inputAttemptWhenModal() {}
-    };
-
-    SilentDummyModalComp dummyModalComponent;
-};
+    return filterArray;
+}
 
 //==============================================================================
 void FileChooser::showPlatformDialog (Array<File>& results,
@@ -186,6 +141,7 @@ void FileChooser::showPlatformDialog (Array<File>& results,
                                         : [NSOpenPanel openPanel];
 
     [panel setTitle: juceStringToNS (title)];
+    [panel setAllowedFileTypes: createAllowedTypesArray (*filters)];
 
     if (! isSaveDialogue)
     {
