@@ -39,20 +39,19 @@ struct TextAtom
     {
         if (passwordCharacter == 0)
             return atomText;
-
-        return String::repeatedString (String::charToString (passwordCharacter),
-                                       atomText.length());
+        else
+            return String::repeatedString (String::charToString (passwordCharacter),
+                                           atomText.length());
     }
 
     String getTrimmedText (const juce_wchar passwordCharacter) const
     {
         if (passwordCharacter == 0)
             return atomText.substring (0, numChars);
-
-        if (isNewLine())
+        else if (isNewLine())
             return String::empty;
-
-        return String::repeatedString (String::charToString (passwordCharacter), numChars);
+        else
+            return String::repeatedString (String::charToString (passwordCharacter), numChars);
     }
 };
 
@@ -648,15 +647,10 @@ public:
                          atom->getText (passwordCharacter),
                          atomX, 0.0f);
 
-        const int numGlyphs = g.getNumGlyphs();
-
         int j;
-        for (j = 0; j < numGlyphs; ++j)
-        {
-            const PositionedGlyph& pg = g.getGlyph(j);
-            if ((pg.getLeft() + pg.getRight()) / 2 > xToFind)
+        for (j = 0; j < g.getNumGlyphs(); ++j)
+            if ((g.getGlyph(j).getLeft() + g.getGlyph(j).getRight()) / 2 > xToFind)
                 break;
-        }
 
         return indexInText + j;
     }
@@ -1390,11 +1384,9 @@ Rectangle<int> TextEditor::getCaretRectangle()
 }
 
 //==============================================================================
-enum { rightEdgeSpace = 2 };
-
 float TextEditor::getWordWrapWidth() const
 {
-    return wordWrap ? (float) (viewport->getMaximumVisibleWidth() - (leftIndent + rightEdgeSpace + 1))
+    return wordWrap ? (float) (viewport->getMaximumVisibleWidth() - leftIndent - leftIndent / 2)
                     : std::numeric_limits<float>::max();
 }
 
@@ -1415,7 +1407,7 @@ void TextEditor::updateTextHolderSize()
         const int h = topIndent + roundToInt (jmax (i.lineY + i.lineHeight,
                                                     currentFont.getHeight()));
 
-        textHolder->setSize (w + rightEdgeSpace, h + 1); // (allows a bit of space for the cursor to be at the right-hand-edge)
+        textHolder->setSize (w + 2, h + 1); // (the +2 allows a bit of space for the cursor to be at the right-hand-edge)
     }
 }
 

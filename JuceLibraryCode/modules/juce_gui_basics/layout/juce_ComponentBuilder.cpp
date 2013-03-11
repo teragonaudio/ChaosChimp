@@ -52,8 +52,12 @@ namespace ComponentBuilderHelpers
             return &c;
 
         for (int i = c.getNumChildComponents(); --i >= 0;)
-            if (Component* const child = findComponentWithID (*c.getChildComponent (i), compId))
+        {
+            Component* const child = findComponentWithID (*c.getChildComponent (i), compId);
+
+            if (child != nullptr)
                 return child;
+        }
 
         return nullptr;
     }
@@ -69,7 +73,9 @@ namespace ComponentBuilderHelpers
 
     static void updateComponent (ComponentBuilder& builder, const ValueTree& state)
     {
-        if (Component* topLevelComp = builder.getManagedComponent())
+        Component* topLevelComp = builder.getManagedComponent();
+
+        if (topLevelComp != nullptr)
         {
             ComponentBuilder::TypeHandler* const type = builder.getHandlerForState (state);
             const String uid (getStateId (state));
@@ -82,7 +88,9 @@ namespace ComponentBuilderHelpers
             }
             else
             {
-                if (Component* const changedComp = findComponentWithID (*topLevelComp, uid))
+                Component* const changedComp = findComponentWithID (*topLevelComp, uid);
+
+                if (changedComp != nullptr)
                     type->updateComponentFromState (changedComp, state);
             }
         }
@@ -256,10 +264,11 @@ void ComponentBuilder::updateChildComponents (Component& parent, const ValueTree
 
             if (c == nullptr)
             {
-                if (TypeHandler* const type = getHandlerForState (childState))
+                TypeHandler* const type = getHandlerForState (childState);
+                jassert (type != nullptr);
+
+                if (type != nullptr)
                     c = ComponentBuilderHelpers::createNewComponent (*type, childState, &parent);
-                else
-                    jassertfalse;
             }
 
             if (c != nullptr)

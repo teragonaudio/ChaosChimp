@@ -74,9 +74,9 @@ void OutputStream::writeByte (char byte)
     write (&byte, 1);
 }
 
-void OutputStream::writeRepeatedByte (uint8 byte, size_t numTimesToRepeat)
+void OutputStream::writeRepeatedByte (uint8 byte, int numTimesToRepeat)
 {
-    for (size_t i = 0; i < numTimesToRepeat; ++i)
+    while (--numTimesToRepeat >= 0)
         writeByte ((char) byte);
 }
 
@@ -170,8 +170,8 @@ void OutputStream::writeString (const String& text)
 {
     // (This avoids using toUTF8() to prevent the memory bloat that it would leave behind
     // if lots of large, persistent strings were to be written to streams).
-    const size_t numBytes = text.getNumBytesAsUTF8() + 1;
-    HeapBlock<char> temp (numBytes);
+    const int numBytes = text.getNumBytesAsUTF8() + 1;
+    HeapBlock<char> temp ((size_t) numBytes);
     text.copyToUTF8 (temp, numBytes);
     write (temp, numBytes);
 }
@@ -265,42 +265,42 @@ void OutputStream::setNewLineString (const String& newLineString_)
 }
 
 //==============================================================================
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const int number)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const int number)
 {
     return stream << String (number);
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const int64 number)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const int64 number)
 {
     return stream << String (number);
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const double number)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const double number)
 {
     return stream << String (number);
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const char character)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const char character)
 {
     stream.writeByte (character);
     return stream;
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const char* const text)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const char* const text)
 {
-    stream.write (text, strlen (text));
+    stream.write (text, (int) strlen (text));
     return stream;
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const MemoryBlock& data)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const MemoryBlock& data)
 {
     if (data.getSize() > 0)
-        stream.write (data.getData(), data.getSize());
+        stream.write (data.getData(), (int) data.getSize());
 
     return stream;
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const File& fileToRead)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const File& fileToRead)
 {
     FileInputStream in (fileToRead);
 
@@ -310,13 +310,13 @@ JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const Fil
     return stream;
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, InputStream& streamToRead)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, InputStream& streamToRead)
 {
     stream.writeFromInputStream (streamToRead, -1);
     return stream;
 }
 
-JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const NewLine&)
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const NewLine&)
 {
     return stream << stream.getNewLineString();
 }

@@ -519,7 +519,7 @@ private:
             }
         }
 
-        static void menuNeedsUpdate (id, SEL, NSMenu* menu)
+        static void menuNeedsUpdate (id self, SEL, NSMenu* menu)
         {
             if (instance != nullptr)
                 instance->updateMenus (menu);
@@ -585,7 +585,7 @@ namespace MainMenuHelpers
         // this can't be used in a plugin!
         jassert (JUCEApplication::isStandaloneApp());
 
-        if (JUCEApplication* app = JUCEApplication::getInstance())
+        if (JUCEApplication::getInstance() != nullptr)
         {
             JUCE_AUTORELEASEPOOL
 
@@ -598,7 +598,7 @@ namespace MainMenuHelpers
             [mainMenu setSubmenu: appMenu forItem: item];
 
             [NSApp setMainMenu: mainMenu];
-            MainMenuHelpers::createStandardAppMenu (appMenu, app->getApplicationName(), extraItems);
+            MainMenuHelpers::createStandardAppMenu (appMenu, JUCEApplication::getInstance()->getApplicationName(), extraItems);
 
             [appMenu release];
             [mainMenu release];

@@ -157,12 +157,10 @@ File FileBrowserComponent::getSelectedFile (int index) const noexcept
 
 bool FileBrowserComponent::currentFileIsValid() const
 {
-    const File f (getSelectedFile (0));
-
     if (isSaveMode())
-        return (flags & canSelectDirectories) != 0 || ! f.isDirectory();
-
-    return f.exists();
+        return ! getSelectedFile (0).isDirectory();
+    else
+        return getSelectedFile (0).exists();
 }
 
 File FileBrowserComponent::getHighlightedFile() const noexcept
@@ -178,8 +176,7 @@ void FileBrowserComponent::deselectAllFiles()
 //==============================================================================
 bool FileBrowserComponent::isFileSuitable (const File& file) const
 {
-    return (flags & canSelectFiles) != 0
-            && (fileFilter == nullptr || fileFilter->isFileSuitable (file));
+    return (flags & canSelectFiles) != 0 && (fileFilter == nullptr || fileFilter->isFileSuitable (file));
 }
 
 bool FileBrowserComponent::isDirectorySuitable (const File&) const
@@ -303,9 +300,7 @@ void FileBrowserComponent::setFileFilter (const FileFilter* const newFileFilter)
 
 String FileBrowserComponent::getActionVerb() const
 {
-    return isSaveMode() ? ((flags & canSelectDirectories) != 0 ? TRANS("Choose")
-                                                               : TRANS("Save"))
-                        : TRANS("Open");
+    return isSaveMode() ? TRANS("Save") : TRANS("Open");
 }
 
 void FileBrowserComponent::setFilenameBoxLabel (const String& name)
@@ -401,7 +396,7 @@ bool FileBrowserComponent::keyPressed (const KeyPress& key)
 {
     (void) key;
 
-   #if JUCE_LINUX || JUCE_WINDOWS
+#if JUCE_LINUX || JUCE_WINDOWS
     if (key.getModifiers().isCommandDown()
          && (key.getKeyCode() == 'H' || key.getKeyCode() == 'h'))
     {
@@ -409,7 +404,7 @@ bool FileBrowserComponent::keyPressed (const KeyPress& key)
         fileList->refresh();
         return true;
     }
-   #endif
+#endif
 
     return false;
 }

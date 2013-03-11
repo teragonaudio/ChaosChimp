@@ -125,7 +125,8 @@ void TimeSliceThread::run()
 
                 index = clients.size() > 0 ? ((index + 1) % clients.size()) : 0;
 
-                if (TimeSliceClient* const firstClient = getNextClient (index))
+                TimeSliceClient* const firstClient = getNextClient (index);
+                if (firstClient != nullptr)
                     nextClientTime = firstClient->nextCallTime;
             }
 

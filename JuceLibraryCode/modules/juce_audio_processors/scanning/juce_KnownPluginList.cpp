@@ -68,7 +68,7 @@ bool KnownPluginList::addType (const PluginDescription& type)
         }
     }
 
-    types.insert (0, new PluginDescription (type));
+    types.add (new PluginDescription (type));
     sendChangeMessage();
     return true;
 }
@@ -116,11 +116,6 @@ bool KnownPluginList::isListingUpToDate (const String& fileOrIdentifier) const
     return true;
 }
 
-void KnownPluginList::setCustomScanner (CustomScanner* newScanner)
-{
-    scanner = newScanner;
-}
-
 bool KnownPluginList::scanAndAddFile (const String& fileOrIdentifier,
                                       const bool dontRescanIfAlreadyInList,
                                       OwnedArray <PluginDescription>& typesFound,
@@ -152,16 +147,7 @@ bool KnownPluginList::scanAndAddFile (const String& fileOrIdentifier,
         return false;
 
     OwnedArray <PluginDescription> found;
-
-    if (scanner != nullptr)
-    {
-        if (! scanner->findPluginTypesFor (format, found, fileOrIdentifier))
-            addToBlacklist (fileOrIdentifier);
-    }
-    else
-    {
-        format.findAllTypesForFile (found, fileOrIdentifier);
-    }
+    format.findAllTypesForFile (found, fileOrIdentifier);
 
     for (int i = 0; i < found.size(); ++i)
     {
@@ -181,39 +167,29 @@ void KnownPluginList::scanAndAddDragAndDroppedFiles (AudioPluginFormatManager& f
 {
     for (int i = 0; i < files.size(); ++i)
     {
-        const String filenameOrID (files[i]);
-        bool found = false;
-
         for (int j = 0; j < formatManager.getNumFormats(); ++j)
         {
             AudioPluginFormat* const format = formatManager.getFormat (j);
 
-            if (format->fileMightContainThisPluginType (filenameOrID)
-                 && scanAndAddFile (filenameOrID, true, typesFound, *format))
-            {
-                found = true;
-                break;
-            }
+            if (scanAndAddFile (files[i], true, typesFound, *format))
+                return;
         }
 
-        if (! found)
+        const File f (files[i]);
+
+        if (f.isDirectory())
         {
-            const File f (filenameOrID);
+            StringArray s;
 
-            if (f.isDirectory())
             {
-                StringArray s;
+                Array<File> subFiles;
+                f.findChildFiles (subFiles, File::findFilesAndDirectories, false);
 
-                {
-                    Array<File> subFiles;
-                    f.findChildFiles (subFiles, File::findFilesAndDirectories, false);
-
-                    for (int j = 0; j < subFiles.size(); ++j)
-                        s.add (subFiles.getReference(j).getFullPathName());
-                }
-
-                scanAndAddDragAndDroppedFiles (formatManager, s, typesFound);
+                for (int j = 0; j < subFiles.size(); ++j)
+                    s.add (subFiles.getReference(j).getFullPathName());
             }
+
+            scanAndAddDragAndDroppedFiles (formatManager, s, typesFound);
         }
     }
 }
@@ -347,32 +323,7 @@ struct PluginTreeUtils
             addPlugin (tree, pd, path);
         }
 
-        optimiseFolders (tree, false);
-    }
-
-    static void optimiseFolders (KnownPluginList::PluginTree& tree, bool concatenateName)
-    {
-        for (int i = tree.subFolders.size(); --i >= 0;)
-        {
-            KnownPluginList::PluginTree& sub = *tree.subFolders.getUnchecked(i);
-            optimiseFolders (sub, concatenateName || (tree.subFolders.size() > 1));
-
-            if (sub.plugins.size() == 0)
-            {
-                for (int j = 0; j < sub.subFolders.size(); ++j)
-                {
-                    KnownPluginList::PluginTree* const s = sub.subFolders.getUnchecked(j);
-
-                    if (concatenateName)
-                        s->folder = sub.folder + "/" + s->folder;
-
-                    tree.subFolders.add (s);
-                }
-
-                sub.subFolders.clear (false);
-                tree.subFolders.remove (i);
-            }
-        }
+        optimise (tree);
     }
 
     static void buildTreeByCategory (KnownPluginList::PluginTree& tree,
@@ -447,6 +398,25 @@ struct PluginTreeUtils
         }
     }
 
+    // removes any deeply nested folders that don't contain any actual plugins
+    static void optimise (KnownPluginList::PluginTree& tree)
+    {
+        for (int i = tree.subFolders.size(); --i >= 0;)
+        {
+            KnownPluginList::PluginTree& sub = *tree.subFolders.getUnchecked(i);
+            optimise (sub);
+
+            if (sub.plugins.size() == 0)
+            {
+                for (int j = 0; j < sub.subFolders.size(); ++j)
+                    tree.subFolders.add (sub.subFolders.getUnchecked(j));
+
+                sub.subFolders.clear (false);
+                tree.subFolders.remove (i);
+            }
+        }
+    }
+
     static void addToMenu (const KnownPluginList::PluginTree& tree, PopupMenu& m, const OwnedArray <PluginDescription>& allPlugins)
     {
         for (int i = 0; i < tree.subFolders.size(); ++i)
@@ -509,7 +479,3 @@ int KnownPluginList::getIndexChosenByMenu (const int menuResultCode) const
     const int i = menuResultCode - menuIdBase;
     return isPositiveAndBelow (i, types.size()) ? i : -1;
 }
-
-//==============================================================================
-KnownPluginList::CustomScanner::CustomScanner() {}
-KnownPluginList::CustomScanner::~CustomScanner() {}

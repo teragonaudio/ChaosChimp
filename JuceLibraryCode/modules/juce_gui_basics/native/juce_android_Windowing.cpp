@@ -600,10 +600,12 @@ Desktop::DisplayOrientation Desktop::getCurrentOrientation() const
     return upright;
 }
 
-bool Desktop::addMouseInputSource()
+void Desktop::createMouseInputSources()
 {
-    mouseSources.add (new MouseInputSource (mouseSources.size(), false));
-    return true;
+    // This creates a mouse input source for each possible finger
+
+    for (int i = 0; i < 10; ++i)
+        mouseSources.add (new MouseInputSource (i, false));
 }
 
 Point<int> MouseInputSource::getCurrentMousePosition()

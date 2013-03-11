@@ -159,7 +159,7 @@ public:
                                        bool isMouseOverButton,
                                        bool isButtonDown);
 
-    virtual Font getTextButtonFont (TextButton& button);
+    virtual const Font getFontForTextButton (TextButton& button);
 
     /** Draws the text for a TextButton. */
     virtual void drawButtonText (Graphics& g,
@@ -360,7 +360,7 @@ public:
                                     const Colour* const textColour);
 
     /** Returns the size and style of font to use in popup menus. */
-    virtual Font getPopupMenuFont();
+    virtual const Font getPopupMenuFont();
 
     virtual void drawPopupMenuUpDownArrow (Graphics& g,
                                            int width, int height,
@@ -381,7 +381,7 @@ public:
 
     virtual int getMenuBarItemWidth (MenuBarComponent& menuBar, int itemIndex, const String& itemText);
 
-    virtual Font getMenuBarFont (MenuBarComponent& menuBar, int itemIndex, const String& itemText);
+    virtual const Font getMenuBarFont (MenuBarComponent& menuBar, int itemIndex, const String& itemText);
 
     virtual void drawMenuBarItem (Graphics& g,
                                   int width, int height,
@@ -399,16 +399,14 @@ public:
                                int buttonW, int buttonH,
                                ComboBox& box);
 
-    virtual Font getComboBoxFont (ComboBox& box);
+    virtual const Font getComboBoxFont (ComboBox& box);
 
     virtual Label* createComboBoxTextBox (ComboBox& box);
 
     virtual void positionComboBoxText (ComboBox& box, Label& labelToPosition);
 
     //==============================================================================
-    virtual void drawLabel (Graphics&, Label&);
-
-    virtual Font getLabelFont (Label&);
+    virtual void drawLabel (Graphics& g, Label& label);
 
     //==============================================================================
     virtual void drawLinearSlider (Graphics& g,
@@ -673,7 +671,6 @@ private:
     virtual int drawTabButtonText (Graphics&, int, int, int, int, const Colour&, int, const String&, Button&, TabbedButtonBar::Orientation, bool, bool, bool) { return 0; }
     virtual int getTabButtonBestWidth (int, const String&, int, Button&) { return 0; }
     virtual int drawBubble (Graphics&, float, float, float, float, float, float) { return 0; }
-    virtual int getFontForTextButton (TextButton&) { return 0; }
    #endif
 
     class GlassWindowButton;

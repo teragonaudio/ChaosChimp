@@ -190,7 +190,7 @@ void JUCE_CALLTYPE Thread::sleep (int millisecs)
     struct timespec time;
     time.tv_sec = millisecs / 1000;
     time.tv_nsec = (millisecs % 1000) * 1000000;
-    nanosleep (&time, nullptr);
+    nanosleep (&time, 0);
 }
 
 
@@ -494,19 +494,19 @@ void FileOutputStream::closeHandle()
     }
 }
 
-ssize_t FileOutputStream::writeInternal (const void* const data, const size_t numBytes)
+int FileOutputStream::writeInternal (const void* const data, const int numBytes)
 {
     ssize_t result = 0;
 
     if (fileHandle != 0)
     {
-        result = ::write (getFD (fileHandle), data, numBytes);
+        result = ::write (getFD (fileHandle), data, (size_t) numBytes);
 
         if (result == -1)
             status = getResultForErrno();
     }
 
-    return result;
+    return (int) result;
 }
 
 void FileOutputStream::flushInternal()
@@ -546,37 +546,36 @@ String SystemStats::getEnvironmentVariable (const String& name, const String& de
 }
 
 //==============================================================================
-void MemoryMappedFile::openInternal (const File& file, AccessMode mode)
+MemoryMappedFile::MemoryMappedFile (const File& file, MemoryMappedFile::AccessMode mode)
+    : address (nullptr),
+      length (0),
+      fileHandle (0)
 {
     jassert (mode == readOnly || mode == readWrite);
-
-    if (range.getStart() > 0)
-    {
-        const long pageSize = sysconf (_SC_PAGE_SIZE);
-        range.setStart (range.getStart() - (range.getStart() % pageSize));
-    }
 
     fileHandle = open (file.getFullPathName().toUTF8(),
                        mode == readWrite ? (O_CREAT + O_RDWR) : O_RDONLY, 00644);
 
     if (fileHandle != -1)
     {
-        void* m = mmap (0, (size_t) range.getLength(),
+        const int64 fileSize = file.getSize();
+
+        void* m = mmap (0, (size_t) fileSize,
                         mode == readWrite ? (PROT_READ | PROT_WRITE) : PROT_READ,
-                        MAP_SHARED, fileHandle,
-                        (off_t) range.getStart());
+                        MAP_SHARED, fileHandle, 0);
 
         if (m != MAP_FAILED)
+        {
             address = m;
-        else
-            range = Range<int64>();
+            length = (size_t) fileSize;
+        }
     }
 }
 
 MemoryMappedFile::~MemoryMappedFile()
 {
     if (address != nullptr)
-        munmap (address, range.getLength());
+        munmap (address, length);
 
     if (fileHandle != 0)
         close (fileHandle);
@@ -1120,155 +1119,3 @@ bool ChildProcess::kill()
 {
     return activeProcess == nullptr || activeProcess->killProcess();
 }
-
-//==============================================================================
-struct HighResolutionTimer::Pimpl
-{
-    Pimpl (HighResolutionTimer& t)  : owner (t), thread (0), shouldStop (false)
-    {
-    }
-
-    ~Pimpl()
-    {
-        jassert (thread == 0);
-    }
-
-    void start (int newPeriod)
-    {
-        periodMs = newPeriod;
-
-        if (thread == 0)
-        {
-            shouldStop = false;
-
-            if (pthread_create (&thread, nullptr, timerThread, this) == 0)
-                setThreadToRealtime (thread, newPeriod);
-            else
-                jassertfalse;
-        }
-    }
-
-    void stop()
-    {
-        if (thread != 0)
-        {
-            shouldStop = true;
-
-            while (thread != 0 && thread != pthread_self())
-                Thread::yield();
-        }
-    }
-
-    HighResolutionTimer& owner;
-    int volatile periodMs;
-
-private:
-    pthread_t thread;
-    bool volatile shouldStop;
-
-    static void* timerThread (void* param)
-    {
-       #if ! JUCE_ANDROID
-        int dummy;
-        pthread_setcancelstate (PTHREAD_CANCEL_ENABLE, &dummy);
-       #endif
-
-        reinterpret_cast<Pimpl*> (param)->timerThread();
-        return nullptr;
-    }
-
-    void timerThread()
-    {
-        Clock clock (periodMs);
-
-        while (! shouldStop)
-        {
-            clock.wait();
-            owner.hiResTimerCallback();
-        }
-
-        periodMs = 0;
-        thread = 0;
-    }
-
-    struct Clock
-    {
-       #if JUCE_MAC || JUCE_IOS
-        Clock (double millis) noexcept
-        {
-            mach_timebase_info_data_t timebase;
-            (void) mach_timebase_info (&timebase);
-            delta = (((uint64_t) (millis * 1000000.0)) * timebase.numer) / timebase.denom;
-            time = mach_absolute_time();
-        }
-
-        void wait() noexcept
-        {
-            time += delta;
-            mach_wait_until (time);
-        }
-
-        uint64_t time, delta;
-
-       #elif JUCE_ANDROID
-        Clock (double millis) noexcept  : delta ((uint64) (millis * 1000000))
-        {
-        }
-
-        void wait() noexcept
-        {
-            struct timespec t;
-            t.tv_sec  = (time_t) (delta / 1000000000);
-            t.tv_nsec = (long)   (delta % 1000000000);
-            nanosleep (&t, nullptr);
-        }
-
-        uint64 delta;
-       #else
-        Clock (double millis) noexcept  : delta ((uint64) (millis * 1000000))
-        {
-            struct timespec t;
-            clock_gettime (CLOCK_MONOTONIC, &t);
-            time = 1000000000 * (int64) t.tv_sec + t.tv_nsec;
-        }
-
-        void wait() noexcept
-        {
-            time += delta;
-
-            struct timespec t;
-            t.tv_sec  = (time_t) (time / 1000000000);
-            t.tv_nsec = (long)   (time % 1000000000);
-
-            clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME, &t, nullptr);
-        }
-
-        uint64 time, delta;
-       #endif
-    };
-
-    static bool setThreadToRealtime (pthread_t thread, uint64 periodMs)
-    {
-       #if JUCE_MAC || JUCE_IOS
-        thread_time_constraint_policy_data_t policy;
-        policy.period      = (uint32_t) (periodMs * 1000000);
-        policy.computation = 50000;
-        policy.constraint  = policy.period;
-        policy.preemptible = true;
-
-        return thread_policy_set (pthread_mach_thread_np (thread),
-                                  THREAD_TIME_CONSTRAINT_POLICY,
-                                  (thread_policy_t) &policy,
-                                  THREAD_TIME_CONSTRAINT_POLICY_COUNT) == KERN_SUCCESS;
-
-       #else
-        (void) periodMs;
-        struct sched_param param;
-        param.sched_priority = sched_get_priority_max (SCHED_RR);
-        return pthread_setschedparam (thread, SCHED_RR, &param) == 0;
-
-       #endif
-    }
-
-    JUCE_DECLARE_NON_COPYABLE (Pimpl)
-};

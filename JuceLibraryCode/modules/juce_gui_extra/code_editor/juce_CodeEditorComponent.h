@@ -206,7 +206,7 @@ public:
     const Font& getFont() const noexcept                { return font; }
 
     //==============================================================================
-    struct JUCE_API  ColourScheme
+    struct ColourScheme
     {
         struct TokenType
         {

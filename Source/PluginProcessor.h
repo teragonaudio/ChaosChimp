@@ -12,8 +12,11 @@
 #define __PLUGINPROCESSOR_H_270A7CC2__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "PluginParameters.h"
 #include "RandomChaosExecutor.h"
 
+
+using namespace teragon;
 
 //==============================================================================
 /**
@@ -38,13 +41,13 @@ public:
     //==============================================================================
     const String getName() const { return JucePlugin_Name; }
 
-    int getNumParameters() { return kNumParameters; }
+    int getNumParameters() { return parameters.size(); }
 
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
+    float getParameter (int index) { return parameters[index]->getScaledValue(); }
+    void setParameter (int index, float newValue) { parameters[index]->setScaledValue(newValue); }
 
-    const String getParameterName (int index);
-    const String getParameterText (int index);
+    const String getParameterName (int index) { return parameters[index]->getName().c_str(); }
+    const String getParameterText (int index) { return parameters[index]->getDisplayText().c_str(); }
 
     const String getInputChannelName (int channelIndex) const { return String(channelIndex + 1); }
     const String getOutputChannelName (int channelIndex) const { return String(channelIndex + 1); }
@@ -68,9 +71,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes);
 
 private:
-    enum {
-        kNumParameters
-    } kParameters;
+    PluginParameterSet parameters;
 
 private:
     RandomChaosExecutor chaosExecutor;

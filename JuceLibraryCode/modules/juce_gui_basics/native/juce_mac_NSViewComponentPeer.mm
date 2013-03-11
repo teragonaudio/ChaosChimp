@@ -204,15 +204,6 @@ public:
             [window setTitle: juceStringToNS (title)];
     }
 
-    bool setDocumentEditedStatus (bool edited)
-    {
-        if (! hasNativeTitleBar())
-            return false;
-
-        [window setDocumentEdited: edited];
-        return true;
-    }
-
     void setPosition (int x, int y)
     {
         setBounds (x, y, component.getWidth(), component.getHeight(), false);
@@ -529,23 +520,19 @@ public:
 
     void redirectMouseMove (NSEvent* ev)
     {
-        currentModifiers = currentModifiers.withoutMouseButtons();
-
-       #if defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-        if ([NSWindow respondsToSelector: @selector (windowNumberAtPoint:belowWindowWithWindowNumber:)]
-             && [NSWindow windowNumberAtPoint: [[ev window] convertBaseToScreen: [ev locationInWindow]]
-                  belowWindowWithWindowNumber: 0] != [window windowNumber])
+       #if defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
+        if ([NSWindow windowNumberAtPoint: [[ev window] convertBaseToScreen: [ev locationInWindow]]
+              belowWindowWithWindowNumber: 0] != [window windowNumber])
         {
-            // moved into another window which overlaps this one, so trigger an exit
-            handleMouseEvent (0, Point<int> (-1, -1), currentModifiers, getMouseTime (ev));
+            [[NSCursor arrowCursor] set];
         }
         else
        #endif
         {
+            currentModifiers = currentModifiers.withoutMouseButtons();
             sendMouseEvent (ev);
+            showArrowCursorIfNeeded();
         }
-
-        showArrowCursorIfNeeded();
     }
 
     void redirectMouseEnter (NSEvent* ev)
@@ -897,11 +884,10 @@ public:
 
     static void showArrowCursorIfNeeded()
     {
-        Desktop& desktop = Desktop::getInstance();
-        MouseInputSource& mouse = desktop.getMainMouseSource();
+        MouseInputSource& mouse = Desktop::getInstance().getMainMouseSource();
 
         if (mouse.getComponentUnderMouse() == nullptr
-             && desktop.findComponentAt (mouse.getScreenPosition()) == nullptr)
+             && Desktop::getInstance().findComponentAt (mouse.getScreenPosition()) == nullptr)
         {
             [[NSCursor arrowCursor] set];
         }
@@ -1532,11 +1518,9 @@ private:
 
     static NSRange markedRange (id self, SEL)
     {
-        if (NSViewComponentPeer* const owner = getOwner (self))
-            if (owner->stringBeingComposed.isNotEmpty())
-                return NSMakeRange (0, (NSUInteger) owner->stringBeingComposed.length());
-
-        return NSMakeRange (NSNotFound, 0);
+        NSViewComponentPeer* const owner = getOwner (self);
+        return owner->stringBeingComposed.isNotEmpty() ? NSMakeRange (0, (NSUInteger) owner->stringBeingComposed.length())
+                                                       : NSMakeRange (NSNotFound, 0);
     }
 
     static NSRange selectedRange (id self, SEL)
@@ -1587,9 +1571,10 @@ private:
     #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
     static BOOL performKeyEquivalent (id self, SEL, NSEvent* ev)
     {
-        if (NSViewComponentPeer* const owner = getOwner (self))
-            if (owner->redirectPerformKeyEquivalent (ev))
-                return true;
+        NSViewComponentPeer* const owner = getOwner (self);
+
+        if (owner != nullptr && owner->redirectPerformKeyEquivalent (ev))
+            return true;
 
         objc_super s = { self, [NSView class] };
         return objc_msgSendSuper (&s, @selector (performKeyEquivalent:), ev) != nil;
@@ -1626,11 +1611,12 @@ private:
 
     static NSDragOperation draggingUpdated (id self, SEL, id <NSDraggingInfo> sender)
     {
-        if (NSViewComponentPeer* const owner = getOwner (self))
-            if (owner->sendDragCallback (0, sender))
-                return NSDragOperationCopy | NSDragOperationMove | NSDragOperationGeneric;
+        NSViewComponentPeer* const owner = getOwner (self);
 
-        return NSDragOperationNone;
+        if (owner != nullptr && owner->sendDragCallback (0, sender))
+            return NSDragOperationCopy | NSDragOperationMove | NSDragOperationGeneric;
+        else
+            return NSDragOperationNone;
     }
 
     static void draggingEnded (id self, SEL s, id <NSDraggingInfo> sender)
@@ -1644,7 +1630,7 @@ private:
             owner->sendDragCallback (1, sender);
     }
 
-    static BOOL prepareForDragOperation (id, SEL, id <NSDraggingInfo>)
+    static BOOL prepareForDragOperation (id self, SEL, id <NSDraggingInfo>)
     {
         return YES;
     }
@@ -1752,9 +1738,10 @@ private:
 
     static void windowWillMove (id self, SEL, NSNotification*)
     {
-        if (NSViewComponentPeer* const owner = getOwner (self))
-            if (owner->hasNativeTitleBar())
-                owner->sendModalInputAttemptIfBlocked();
+        NSViewComponentPeer* const owner = getOwner (self);
+
+        if (owner != nullptr && owner->hasNativeTitleBar())
+            owner->sendModalInputAttemptIfBlocked();
     }
 };
 
@@ -1811,15 +1798,9 @@ void ModifierKeys::updateCurrentModifiers() noexcept
 
 
 //==============================================================================
-bool Desktop::addMouseInputSource()
+void Desktop::createMouseInputSources()
 {
-    if (mouseSources.size() == 0)
-    {
-        mouseSources.add (new MouseInputSource (0, true));
-        return true;
-    }
-
-    return false;
+    mouseSources.add (new MouseInputSource (0, true));
 }
 
 //==============================================================================

@@ -119,19 +119,22 @@ void AudioProcessor::setParameterNotifyingHost (const int parameterIndex,
     sendParamChangeMessageToListeners (parameterIndex, newValue);
 }
 
-AudioProcessorListener* AudioProcessor::getListenerLocked (const int index) const noexcept
-{
-    const ScopedLock sl (listenerLock);
-    return listeners [index];
-}
-
 void AudioProcessor::sendParamChangeMessageToListeners (const int parameterIndex, const float newValue)
 {
     jassert (isPositiveAndBelow (parameterIndex, getNumParameters()));
 
     for (int i = listeners.size(); --i >= 0;)
-        if (AudioProcessorListener* l = getListenerLocked (i))
+    {
+        AudioProcessorListener* l;
+
+        {
+            const ScopedLock sl (listenerLock);
+            l = listeners [i];
+        }
+
+        if (l != nullptr)
             l->audioProcessorParameterChanged (this, parameterIndex, newValue);
+    }
 }
 
 void AudioProcessor::beginParameterChangeGesture (int parameterIndex)
@@ -146,8 +149,17 @@ void AudioProcessor::beginParameterChangeGesture (int parameterIndex)
    #endif
 
     for (int i = listeners.size(); --i >= 0;)
-        if (AudioProcessorListener* l = getListenerLocked (i))
+    {
+        AudioProcessorListener* l;
+
+        {
+            const ScopedLock sl (listenerLock);
+            l = listeners [i];
+        }
+
+        if (l != nullptr)
             l->audioProcessorParameterChangeGestureBegin (this, parameterIndex);
+    }
 }
 
 void AudioProcessor::endParameterChangeGesture (int parameterIndex)
@@ -163,15 +175,33 @@ void AudioProcessor::endParameterChangeGesture (int parameterIndex)
    #endif
 
     for (int i = listeners.size(); --i >= 0;)
-        if (AudioProcessorListener* l = getListenerLocked (i))
+    {
+        AudioProcessorListener* l;
+
+        {
+            const ScopedLock sl (listenerLock);
+            l = listeners [i];
+        }
+
+        if (l != nullptr)
             l->audioProcessorParameterChangeGestureEnd (this, parameterIndex);
+    }
 }
 
 void AudioProcessor::updateHostDisplay()
 {
     for (int i = listeners.size(); --i >= 0;)
-        if (AudioProcessorListener* l = getListenerLocked (i))
+    {
+        AudioProcessorListener* l;
+
+        {
+            const ScopedLock sl (listenerLock);
+            l = listeners [i];
+        }
+
+        if (l != nullptr)
             l->audioProcessorChanged (this);
+    }
 }
 
 String AudioProcessor::getParameterLabel (int) const        { return String::empty; }
@@ -236,15 +266,15 @@ const uint32 magicXmlNumber = 0x21324356;
 void AudioProcessor::copyXmlToBinary (const XmlElement& xml, juce::MemoryBlock& destData)
 {
     const String xmlString (xml.createDocument (String::empty, true, false));
-    const size_t stringLength = xmlString.getNumBytesAsUTF8();
+    const int stringLength = xmlString.getNumBytesAsUTF8();
 
-    destData.setSize (stringLength + 9);
+    destData.setSize ((size_t) stringLength + 9);
 
-    uint32* const d = static_cast<uint32*> (destData.getData());
-    d[0] = ByteOrder::swapIfBigEndian ((const uint32) magicXmlNumber);
-    d[1] = ByteOrder::swapIfBigEndian ((const uint32) stringLength);
+    char* const d = static_cast<char*> (destData.getData());
+    *(uint32*) d = ByteOrder::swapIfBigEndian ((const uint32) magicXmlNumber);
+    *(uint32*) (d + 4) = ByteOrder::swapIfBigEndian ((const uint32) stringLength);
 
-    xmlString.copyToUTF8 ((CharPointer_UTF8::CharType*) (d + 2), stringLength + 1);
+    xmlString.copyToUTF8 (d + 8, stringLength + 1);
 }
 
 XmlElement* AudioProcessor::getXmlFromBinary (const void* data, const int sizeInBytes)

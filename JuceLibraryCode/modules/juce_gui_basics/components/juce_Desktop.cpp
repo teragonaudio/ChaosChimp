@@ -28,7 +28,7 @@ Desktop::Desktop()
       kioskModeComponent (nullptr),
       allowedOrientations (allOrientations)
 {
-    addMouseInputSource();
+    createMouseInputSources();
 }
 
 Desktop::~Desktop()
@@ -101,8 +101,12 @@ void Desktop::setDefaultLookAndFeel (LookAndFeel* newDefaultLookAndFeel)
     currentLookAndFeel = newDefaultLookAndFeel;
 
     for (int i = getNumComponents(); --i >= 0;)
-        if (Component* const c = getComponent (i))
+    {
+        Component* const c = getComponent (i);
+
+        if (c != nullptr)
             c->sendLookAndFeelChange();
+    }
 }
 
 //==============================================================================
@@ -300,7 +304,9 @@ void Desktop::sendMouseMove()
 
         lastFakeMouseMove = getMousePosition();
 
-        if (Component* const target = findComponentAt (lastFakeMouseMove))
+        Component* const target = findComponentAt (lastFakeMouseMove);
+
+        if (target != nullptr)
         {
             Component::BailOutChecker checker (target);
             const Point<int> pos (target->getLocalPoint (nullptr, lastFakeMouseMove));
@@ -399,8 +405,11 @@ void Desktop::Displays::refresh()
     if (oldDisplays != displays)
     {
         for (int i = ComponentPeer::getNumPeers(); --i >= 0;)
-            if (ComponentPeer* const peer = ComponentPeer::getPeer (i))
-                peer->handleScreenSizeChange();
+        {
+            ComponentPeer* const p = ComponentPeer::getPeer (i);
+            if (p != nullptr)
+                p->handleScreenSizeChange();
+        }
     }
 }
 

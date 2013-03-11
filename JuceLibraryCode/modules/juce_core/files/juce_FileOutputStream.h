@@ -90,8 +90,8 @@ public:
     void flush();
     int64 getPosition();
     bool setPosition (int64 pos);
-    bool write (const void* data, size_t numBytes);
-    void writeRepeatedByte (uint8 byte, size_t numTimesToRepeat);
+    bool write (const void* data, int numBytes);
+    void writeRepeatedByte (uint8 byte, int numTimesToRepeat);
 
 
 private:
@@ -100,15 +100,15 @@ private:
     void* fileHandle;
     Result status;
     int64 currentPosition;
-    size_t bufferSize, bytesInBuffer;
+    int bufferSize, bytesInBuffer;
     HeapBlock <char> buffer;
 
     void openHandle();
     void closeHandle();
     void flushInternal();
     bool flushBuffer();
-    int64 setPositionInternal (int64);
-    ssize_t writeInternal (const void*, size_t);
+    int64 setPositionInternal (int64 newPosition);
+    int writeInternal (const void* data, int numBytes);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileOutputStream)
 };

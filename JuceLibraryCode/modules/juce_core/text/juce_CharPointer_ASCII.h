@@ -223,7 +223,7 @@ public:
         to the destination buffer before stopping.
     */
     template <typename CharPointer>
-    size_t writeWithDestByteLimit (const CharPointer& src, const size_t maxDestBytes) noexcept
+    int writeWithDestByteLimit (const CharPointer& src, const int maxDestBytes) noexcept
     {
         return CharacterFunctions::copyWithDestByteLimit (*this, src, maxDestBytes);
     }

@@ -273,10 +273,10 @@ String SystemClipboard::getTextFromClipboard()
 }
 
 //==============================================================================
-bool Desktop::addMouseInputSource()
+void Desktop::createMouseInputSources()
 {
-    mouseSources.add (new MouseInputSource (mouseSources.size(), false));
-    return true;
+    for (int i = 0; i < 10; ++i)
+        mouseSources.add (new MouseInputSource (i, false));
 }
 
 bool Desktop::canUseSemiTransparentWindows() noexcept

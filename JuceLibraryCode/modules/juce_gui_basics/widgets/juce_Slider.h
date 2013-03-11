@@ -494,7 +494,7 @@ public:
 
         @see Slider::addListener, Slider::removeListener
     */
-    class JUCE_API  Listener
+    class Listener
     {
     public:
         //==============================================================================

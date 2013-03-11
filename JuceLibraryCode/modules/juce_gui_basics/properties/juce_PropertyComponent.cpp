@@ -31,6 +31,7 @@ PropertyComponent::PropertyComponent (const String& name, const int preferredHei
 
 PropertyComponent::~PropertyComponent() {}
 
+//==============================================================================
 void PropertyComponent::paint (Graphics& g)
 {
     LookAndFeel& lf = getLookAndFeel();
@@ -41,7 +42,8 @@ void PropertyComponent::paint (Graphics& g)
 
 void PropertyComponent::resized()
 {
-    if (Component* const c = getChildComponent(0))
+    Component* const c = getChildComponent(0);
+    if (c != nullptr)
         c->setBounds (getLookAndFeel().getPropertyComponentContentPosition (*this));
 }
 

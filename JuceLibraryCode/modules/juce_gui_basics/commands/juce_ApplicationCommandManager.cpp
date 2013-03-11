@@ -125,19 +125,17 @@ const ApplicationCommandInfo* ApplicationCommandManager::getCommandForID (const 
 
 String ApplicationCommandManager::getNameOfCommand (const CommandID commandID) const noexcept
 {
-    if (const ApplicationCommandInfo* const ci = getCommandForID (commandID))
-        return ci->shortName;
+    const ApplicationCommandInfo* const ci = getCommandForID (commandID);
 
-    return String::empty;
+    return ci != nullptr ? ci->shortName : String::empty;
 }
 
 String ApplicationCommandManager::getDescriptionOfCommand (const CommandID commandID) const noexcept
 {
-    if (const ApplicationCommandInfo* const ci = getCommandForID (commandID))
-        return ci->description.isNotEmpty() ? ci->description
-                                            : ci->shortName;
+    const ApplicationCommandInfo* const ci = getCommandForID (commandID);
 
-    return String::empty;
+    return ci != nullptr ? (ci->description.isNotEmpty() ? ci->description : ci->shortName)
+                         : String::empty;
 }
 
 StringArray ApplicationCommandManager::getCommandCategories() const
@@ -249,13 +247,11 @@ ApplicationCommandTarget* ApplicationCommandManager::findDefaultComponentTarget(
 
     if (c == nullptr && Process::isForegroundProcess())
     {
-        Desktop& desktop = Desktop::getInstance();
-
         // getting a bit desperate now: try all desktop comps..
-        for (int i = desktop.getNumComponents(); --i >= 0;)
-            if (ComponentPeer* const peer = desktop.getComponent(i)->getPeer())
-                if (ApplicationCommandTarget* const target = findTargetForComponent (peer->getLastFocusedSubcomponent()))
-                    return target;
+        for (int i = Desktop::getInstance().getNumComponents(); --i >= 0;)
+            if (ApplicationCommandTarget* const target = findTargetForComponent (Desktop::getInstance().getComponent (i)
+                                                                                    ->getPeer()->getLastFocusedSubcomponent()))
+                return target;
     }
 
     if (c != nullptr)
@@ -265,8 +261,8 @@ ApplicationCommandTarget* ApplicationCommandManager::findDefaultComponentTarget(
         // still be passed up to the top level window anyway, so let's send it to the
         // content comp.
         if (ResizableWindow* const resizableWindow = dynamic_cast <ResizableWindow*> (c))
-            if (Component* const content = resizableWindow->getContentComponent())
-                c = content;
+            if (resizableWindow->getContentComponent() != nullptr)
+                c = resizableWindow->getContentComponent();
 
         if (ApplicationCommandTarget* const target = findTargetForComponent (c))
             return target;

@@ -67,7 +67,7 @@ bool FileOutputStream::flushBuffer()
 
     if (bytesInBuffer > 0)
     {
-        ok = (writeInternal (buffer, bytesInBuffer) == (ssize_t) bytesInBuffer);
+        ok = (writeInternal (buffer, bytesInBuffer) == bytesInBuffer);
         bytesInBuffer = 0;
     }
 
@@ -80,13 +80,13 @@ void FileOutputStream::flush()
     flushInternal();
 }
 
-bool FileOutputStream::write (const void* const src, const size_t numBytes)
+bool FileOutputStream::write (const void* const src, const int numBytes)
 {
-    jassert (src != nullptr && ((ssize_t) numBytes) >= 0);
+    jassert (src != nullptr && numBytes >= 0);
 
     if (bytesInBuffer + numBytes < bufferSize)
     {
-        memcpy (buffer + bytesInBuffer, src, numBytes);
+        memcpy (buffer + bytesInBuffer, src, (size_t) numBytes);
         bytesInBuffer += numBytes;
         currentPosition += numBytes;
     }
@@ -97,32 +97,32 @@ bool FileOutputStream::write (const void* const src, const size_t numBytes)
 
         if (numBytes < bufferSize)
         {
-            memcpy (buffer + bytesInBuffer, src, numBytes);
+            memcpy (buffer + bytesInBuffer, src, (size_t) numBytes);
             bytesInBuffer += numBytes;
             currentPosition += numBytes;
         }
         else
         {
-            const ssize_t bytesWritten = writeInternal (src, numBytes);
+            const int bytesWritten = writeInternal (src, numBytes);
 
             if (bytesWritten < 0)
                 return false;
 
             currentPosition += bytesWritten;
-            return bytesWritten == (ssize_t) numBytes;
+            return bytesWritten == numBytes;
         }
     }
 
     return true;
 }
 
-void FileOutputStream::writeRepeatedByte (uint8 byte, size_t numBytes)
+void FileOutputStream::writeRepeatedByte (uint8 byte, int numBytes)
 {
-    jassert (((ssize_t) numBytes) >= 0);
+    jassert (numBytes >= 0);
 
     if (bytesInBuffer + numBytes < bufferSize)
     {
-        memset (buffer + bytesInBuffer, byte, numBytes);
+        memset (buffer + bytesInBuffer, byte, (size_t) numBytes);
         bytesInBuffer += numBytes;
         currentPosition += numBytes;
     }

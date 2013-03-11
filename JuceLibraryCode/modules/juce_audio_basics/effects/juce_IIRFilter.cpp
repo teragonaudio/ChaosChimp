@@ -31,15 +31,17 @@
 
 //==============================================================================
 IIRFilter::IIRFilter()
-    : active (false), v1 (0), v2 (0)
+    : active (false)
 {
+    reset();
 }
 
 IIRFilter::IIRFilter (const IIRFilter& other)
-    : active (other.active), v1 (0), v2 (0)
+    : active (other.active)
 {
     const ScopedLock sl (other.processLock);
     memcpy (coefficients, other.coefficients, sizeof (coefficients));
+    reset();
 }
 
 IIRFilter::~IIRFilter()
@@ -50,17 +52,27 @@ IIRFilter::~IIRFilter()
 void IIRFilter::reset() noexcept
 {
     const ScopedLock sl (processLock);
-    v1 = v2 = 0;
+
+    x1 = 0;
+    x2 = 0;
+    y1 = 0;
+    y2 = 0;
 }
 
 float IIRFilter::processSingleSampleRaw (const float in) noexcept
 {
-    float out = coefficients[0] * in + v1;
+    float out = coefficients[0] * in
+                 + coefficients[1] * x1
+                 + coefficients[2] * x2
+                 - coefficients[4] * y1
+                 - coefficients[5] * y2;
 
     JUCE_SNAP_TO_ZERO (out);
 
-    v1 = coefficients[1] * in - coefficients[4] * out + v2;
-    v2 = coefficients[2] * in - coefficients[5] * out;
+    x2 = x1;
+    x1 = in;
+    y2 = y1;
+    y1 = out;
 
     return out;
 }
@@ -76,12 +88,18 @@ void IIRFilter::processSamples (float* const samples,
         {
             const float in = samples[i];
 
-            float out = coefficients[0] * in + v1;
+            float out = coefficients[0] * in
+                         + coefficients[1] * x1
+                         + coefficients[2] * x2
+                         - coefficients[4] * y1
+                         - coefficients[5] * y2;
 
             JUCE_SNAP_TO_ZERO (out);
 
-            v1 = coefficients[1] * in - coefficients[4] * out + v2;
-            v2 = coefficients[2] * in - coefficients[5] * out;
+            x2 = x1;
+            x1 = in;
+            y2 = y1;
+            y1 = out;
 
             samples[i] = out;
         }

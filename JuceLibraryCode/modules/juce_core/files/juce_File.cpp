@@ -286,11 +286,10 @@ String File::getPathUpToLastSlash() const
 
     if (lastSlash > 0)
         return fullPath.substring (0, lastSlash);
-
-    if (lastSlash == 0)
+    else if (lastSlash == 0)
         return separatorString;
-
-    return fullPath;
+    else
+        return fullPath;
 }
 
 File File::getParentDirectory() const
@@ -313,8 +312,8 @@ String File::getFileNameWithoutExtension() const
 
     if (lastDot > lastSlash)
         return fullPath.substring (lastSlash, lastDot);
-
-    return fullPath.substring (lastSlash);
+    else
+        return fullPath.substring (lastSlash);
 }
 
 bool File::isAChildOf (const File& potentialParent) const
@@ -654,10 +653,8 @@ bool File::startAsProcess (const String& parameters) const
 //==============================================================================
 FileInputStream* File::createInputStream() const
 {
-    ScopedPointer<FileInputStream> fin (new FileInputStream (*this));
-
-    if (fin->openedOk())
-        return fin.release();
+    if (existsAsFile())
+        return new FileInputStream (*this);
 
     return nullptr;
 }
@@ -672,11 +669,9 @@ FileOutputStream* File::createOutputStream (const int bufferSize) const
 
 //==============================================================================
 bool File::appendData (const void* const dataToAppend,
-                       const size_t numberOfBytes) const
+                       const int numberOfBytes) const
 {
-    jassert (((ssize_t) numberOfBytes) >= 0);
-
-    if (numberOfBytes == 0)
+    if (numberOfBytes <= 0)
         return true;
 
     FileOutputStream out (*this, 8192);
@@ -684,9 +679,11 @@ bool File::appendData (const void* const dataToAppend,
 }
 
 bool File::replaceWithData (const void* const dataToWrite,
-                            const size_t numberOfBytes) const
+                            const int numberOfBytes) const
 {
-    if (numberOfBytes == 0)
+    jassert (numberOfBytes >= 0); // a negative number of bytes??
+
+    if (numberOfBytes <= 0)
         return deleteFile();
 
     TemporaryFile tempFile (*this, TemporaryFile::useHiddenFile);
@@ -881,19 +878,6 @@ File File::createTempFile (const String& fileNameEnding)
         return createTempFile (fileNameEnding);
 
     return tempFile;
-}
-
-//==============================================================================
-MemoryMappedFile::MemoryMappedFile (const File& file, MemoryMappedFile::AccessMode mode)
-    : address (nullptr), range (0, file.getSize()), fileHandle (0)
-{
-    openInternal (file, mode);
-}
-
-MemoryMappedFile::MemoryMappedFile (const File& file, const Range<int64>& fileRange, AccessMode mode)
-    : address (nullptr), range (fileRange.getIntersectionWith (Range<int64> (0, file.getSize()))), fileHandle (0)
-{
-    openInternal (file, mode);
 }
 
 

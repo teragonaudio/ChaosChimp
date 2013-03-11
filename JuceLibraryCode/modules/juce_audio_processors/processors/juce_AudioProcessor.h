@@ -107,7 +107,7 @@ public:
         let this pass through without being overwritten or cleared.
 
         Also note that the buffer may have more channels than are strictly necessary,
-        but you should only read/write from the ones that your filter is supposed to
+        but your should only read/write from the ones that your filter is supposed to
         be using.
 
         The number of samples in these buffers is NOT guaranteed to be the same for every
@@ -328,8 +328,10 @@ public:
     */
     bool isNonRealtime() const noexcept                                 { return nonRealtime; }
 
-    /** Called by the host to tell this processor whether it's being used in a non-realtime
+    /** Called by the host to tell this processor whether it's being used in a non-realime
         capacity for offline rendering or bouncing.
+
+        Whatever value is passed-in will be
     */
     void setNonRealtime (bool isNonRealtime) noexcept;
 
@@ -631,8 +633,6 @@ private:
    #if JUCE_DEBUG
     BigInteger changingParams;
    #endif
-
-    AudioProcessorListener* getListenerLocked (int) const noexcept;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioProcessor)
 };

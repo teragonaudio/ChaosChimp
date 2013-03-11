@@ -2171,8 +2171,8 @@ public:
         {
             if (transform.isOnlyTranslated)
                 return clip->clipRegionIntersects (transform.translated (r));
-
-            return getClipBounds().intersects (r);
+            else
+                return getClipBounds().intersects (r);
         }
 
         return false;

@@ -128,7 +128,9 @@ juce_ImplementSingleton_SingleThreaded (TopLevelWindowManager)
 void juce_checkCurrentlyFocusedTopLevelWindow();
 void juce_checkCurrentlyFocusedTopLevelWindow()
 {
-    if (TopLevelWindowManager* const wm = TopLevelWindowManager::getInstanceWithoutCreating())
+    TopLevelWindowManager* const wm = TopLevelWindowManager::getInstanceWithoutCreating();
+
+    if (wm != nullptr)
         wm->checkFocusAsync();
 }
 

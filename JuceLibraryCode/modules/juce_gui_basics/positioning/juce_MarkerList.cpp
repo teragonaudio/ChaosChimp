@@ -104,7 +104,9 @@ MarkerList::Marker* MarkerList::getMarkerByName (const String& name) const noexc
 
 void MarkerList::setMarker (const String& name, const RelativeCoordinate& position)
 {
-    if (Marker* const m = getMarkerByName (name))
+    Marker* const m = getMarkerByName (name);
+
+    if (m != nullptr)
     {
         if (m->position != position)
         {
@@ -243,11 +245,15 @@ void MarkerList::ValueTreeWrapper::removeMarker (const ValueTree& marker, UndoMa
 
 double MarkerList::getMarkerPosition (const Marker& marker, Component* parentComponent) const
 {
-    if (parentComponent == nullptr)
+    if (parentComponent != nullptr)
+    {
+        RelativeCoordinatePositionerBase::ComponentScope scope (*parentComponent);
+        return marker.position.resolve (&scope);
+    }
+    else
+    {
         return marker.position.resolve (nullptr);
-
-    RelativeCoordinatePositionerBase::ComponentScope scope (*parentComponent);
-    return marker.position.resolve (&scope);
+    }
 }
 
 //==============================================================================

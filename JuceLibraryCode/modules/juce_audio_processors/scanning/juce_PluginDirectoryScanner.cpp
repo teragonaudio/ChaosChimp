@@ -67,7 +67,7 @@ PluginDirectoryScanner::~PluginDirectoryScanner()
 }
 
 //==============================================================================
-String PluginDirectoryScanner::getNextPluginFileThatWillBeScanned() const
+const String PluginDirectoryScanner::getNextPluginFileThatWillBeScanned() const
 {
     return format.getNameOfPluginFromIdentifier (filesOrIdentifiersToScan [nextIndex]);
 }

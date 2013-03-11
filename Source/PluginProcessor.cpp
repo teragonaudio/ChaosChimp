@@ -11,10 +11,11 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 ChaosChimpAudioProcessor::ChaosChimpAudioProcessor()
 {
+    parameters.add(new FloatParameter("Probability", 0.0, 100.0, 0.0));
+    parameters.add(new BooleanParameter("Crash", false));
 }
 
 ChaosChimpAudioProcessor::~ChaosChimpAudioProcessor()
@@ -23,26 +24,6 @@ ChaosChimpAudioProcessor::~ChaosChimpAudioProcessor()
 
 //==============================================================================
 
-float ChaosChimpAudioProcessor::getParameter (int index)
-{
-    return 0.0f;
-}
-
-void ChaosChimpAudioProcessor::setParameter (int index, float newValue)
-{
-}
-
-const String ChaosChimpAudioProcessor::getParameterName (int index)
-{
-    return String::empty;
-}
-
-const String ChaosChimpAudioProcessor::getParameterText (int index)
-{
-    return String::empty;
-}
-
-//==============================================================================
 void ChaosChimpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 }
@@ -82,10 +63,24 @@ AudioProcessorEditor* ChaosChimpAudioProcessor::createEditor()
 //==============================================================================
 void ChaosChimpAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
+    XmlElement xml(getName());
+    for (int i = 0; i < getNumParameters(); i++) {
+        PluginParameter *parameter = parameters[i];
+        xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
+    }
 }
 
 void ChaosChimpAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    if (xmlState != 0 && xmlState->hasTagName(getName())) {
+        for (int i = 0; i < getNumParameters(); i++) {
+            PluginParameter *parameter = parameters[i];
+            if (xmlState->hasAttribute(parameter->getSafeName().c_str())) {
+                parameter->setValue(xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
+            }
+        }
+    }
 }
 
 //==============================================================================

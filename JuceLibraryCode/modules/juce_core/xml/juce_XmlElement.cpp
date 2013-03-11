@@ -254,6 +254,7 @@ void XmlElement::writeElementAsText (OutputStream& outputStream,
         {
             outputStream.writeByte ('>');
 
+
             bool lastWasTextNode = false;
 
             for (XmlElement* child = firstChildElement; child != nullptr; child = child->nextListItem)
@@ -499,7 +500,9 @@ void XmlElement::setAttribute (const String& attributeName, const String& value)
     }
     else
     {
-        for (XmlAttributeNode* att = attributes; ; att = att->nextListItem)
+        XmlAttributeNode* att = attributes;
+
+        for (;;)
         {
             if (att->hasName (attributeName))
             {
@@ -511,6 +514,8 @@ void XmlElement::setAttribute (const String& attributeName, const String& value)
                 att->nextListItem = new XmlAttributeNode (attributeName, value);
                 break;
             }
+
+            att = att->nextListItem;
         }
     }
 }
@@ -527,15 +532,17 @@ void XmlElement::setAttribute (const String& attributeName, const double number)
 
 void XmlElement::removeAttribute (const String& attributeName) noexcept
 {
-    for (LinkedListPointer<XmlAttributeNode>* att = &attributes;
-         att->get() != nullptr;
-         att = &(att->get()->nextListItem))
+    LinkedListPointer<XmlAttributeNode>* att = &attributes;
+
+    while (att->get() != nullptr)
     {
         if (att->get()->hasName (attributeName))
         {
             delete att->removeNext();
             break;
         }
+
+        att = &(att->get()->nextListItem);
     }
 }
 
@@ -592,7 +599,9 @@ bool XmlElement::replaceChildElement (XmlElement* const currentChildElement,
 {
     if (newNode != nullptr)
     {
-        if (LinkedListPointer<XmlElement>* const p = firstChildElement.findPointerTo (currentChildElement))
+        LinkedListPointer<XmlElement>* const p = firstChildElement.findPointerTo (currentChildElement);
+
+        if (p != nullptr)
         {
             if (currentChildElement != newNode)
                 delete p->replaceNext (newNode);
@@ -696,7 +705,9 @@ void XmlElement::deleteAllChildElements() noexcept
 
 void XmlElement::deleteAllChildElementsWithTagName (const String& name) noexcept
 {
-    for (XmlElement* child = firstChildElement; child != nullptr;)
+    XmlElement* child = firstChildElement;
+
+    while (child != nullptr)
     {
         XmlElement* const nextChild = child->nextListItem;
 
@@ -722,7 +733,9 @@ XmlElement* XmlElement::findParentElementOf (const XmlElement* const elementToLo
         if (elementToLookFor == child)
             return this;
 
-        if (XmlElement* const found = child->findParentElementOf (elementToLookFor))
+        XmlElement* const found = child->findParentElementOf (elementToLookFor);
+
+        if (found != nullptr)
             return found;
     }
 
@@ -788,7 +801,9 @@ String XmlElement::getAllSubText() const
 String XmlElement::getChildElementAllSubText (const String& childTagName,
                                               const String& defaultReturnValue) const
 {
-    if (const XmlElement* const child = getChildByName (childTagName))
+    const XmlElement* const child = getChildByName (childTagName);
+
+    if (child != nullptr)
         return child->getAllSubText();
 
     return defaultReturnValue;
@@ -808,7 +823,9 @@ void XmlElement::addTextElement (const String& text)
 
 void XmlElement::deleteAllTextElements() noexcept
 {
-    for (XmlElement* child = firstChildElement; child != nullptr;)
+    XmlElement* child = firstChildElement;
+
+    while (child != nullptr)
     {
         XmlElement* const next = child->nextListItem;
 

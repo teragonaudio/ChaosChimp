@@ -265,10 +265,8 @@ int ZipFile::getNumEntries() const noexcept
 
 const ZipFile::ZipEntry* ZipFile::getEntry (const int index) const noexcept
 {
-    if (ZipEntryHolder* const zei = entries [index])
-        return &(zei->entry);
-
-    return nullptr;
+    ZipEntryHolder* const zei = entries [index];
+    return zei != nullptr ? &(zei->entry) : nullptr;
 }
 
 int ZipFile::getIndexOfFileName (const String& fileName) const noexcept
@@ -287,9 +285,10 @@ const ZipFile::ZipEntry* ZipFile::getEntry (const String& fileName) const noexce
 
 InputStream* ZipFile::createStreamForEntry (const int index)
 {
+    ZipEntryHolder* const zei = entries[index];
     InputStream* stream = nullptr;
 
-    if (ZipEntryHolder* const zei = entries[index])
+    if (zei != nullptr)
     {
         stream = new ZipInputStream (*this, *zei);
 
@@ -304,15 +303,6 @@ InputStream* ZipFile::createStreamForEntry (const int index)
     }
 
     return stream;
-}
-
-InputStream* ZipFile::createStreamForEntry (const ZipEntry& entry)
-{
-    for (int i = 0; i < entries.size(); ++i)
-        if (&entries.getUnchecked (i)->entry == &entry)
-            return createStreamForEntry (i);
-
-    return nullptr;
 }
 
 void ZipFile::sortEntriesByFilename()
@@ -520,7 +510,7 @@ private:
                 return false;
 
             checksum = juce_crc32 (checksum, buffer, (unsigned int) bytesRead);
-            target.write (buffer, (size_t) bytesRead);
+            target.write (buffer, bytesRead);
         }
 
         return true;

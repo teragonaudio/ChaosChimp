@@ -177,8 +177,7 @@ void NamedPipe::close()
         pimpl->stopReadOperation = true;
 
         char buffer[1] = { 0 };
-        ssize_t done = ::write (pimpl->pipeIn, buffer, 1);
-        (void) done;
+        ::write (pimpl->pipeIn, buffer, 1);
 
         ScopedWriteLock sl (lock);
         pimpl = nullptr;

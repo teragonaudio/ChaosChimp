@@ -518,7 +518,9 @@ void XmlDocument::readChildElements (XmlElement* parent)
             else
             {
                 // this is some other element, so parse and add it..
-                if (XmlElement* const n = readNextElement (true))
+                XmlElement* const n = readNextElement (true);
+
+                if (n != nullptr)
                     childAppender.append (n);
                 else
                     break;
@@ -841,8 +843,8 @@ String XmlDocument::getParameterEntity (const String& entity)
 
             if (ent.equalsIgnoreCase ("system"))
                 return getFileContents (tokenisedDTD [i + 2].trimCharactersAtEnd (">"));
-
-            return ent.trim().unquoted();
+            else
+                return ent.trim().unquoted();
         }
     }
 

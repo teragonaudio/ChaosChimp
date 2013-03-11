@@ -125,8 +125,9 @@ bool DirectoryContentsList::getFileInfo (const int index,
                                          FileInfo& result) const
 {
     const ScopedLock sl (fileListLock);
+    const FileInfo* const info = files [index];
 
-    if (const FileInfo* const info = files [index])
+    if (info != nullptr)
     {
         result = *info;
         return true;
@@ -138,8 +139,9 @@ bool DirectoryContentsList::getFileInfo (const int index,
 File DirectoryContentsList::getFile (const int index) const
 {
     const ScopedLock sl (fileListLock);
+    const FileInfo* const info = files [index];
 
-    if (const FileInfo* const info = files [index])
+    if (info != nullptr)
         return root.getChildFile (info->filename);
 
     return File::nonexistent;
@@ -211,8 +213,10 @@ bool DirectoryContentsList::checkNextFile (bool& hasChanged)
 
             return true;
         }
-
-        fileFindHandle = nullptr;
+        else
+        {
+            fileFindHandle = nullptr;
+        }
     }
 
     return false;

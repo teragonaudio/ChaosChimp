@@ -63,9 +63,7 @@ public:
 
     HRESULT CoCreateInstance (REFCLSID classUUID, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
     {
-        HRESULT hr = ::CoCreateInstance (classUUID, 0, dwClsContext, __uuidof (ComClass), (void**) resetAndGetPointerAddress());
-        jassert (hr != CO_E_NOTINITIALIZED); // You haven't called CoInitialize for the current thread!
-        return hr;
+        return ::CoCreateInstance (classUUID, 0, dwClsContext, __uuidof (ComClass), (void**) resetAndGetPointerAddress());
     }
 
     template <class OtherComClass>
@@ -107,21 +105,6 @@ public:
 
 protected:
     ULONG refCount;
-
-    JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
-    {
-        if (refId == IID_IUnknown)
-            return castToType <IUnknown> (result);
-
-        *result = 0;
-        return E_NOINTERFACE;
-    }
-
-    template <class Type>
-    JUCE_COMRESULT castToType (void** result)
-    {
-        this->AddRef(); *result = dynamic_cast <Type*> (this); return S_OK;
-    }
 };
 
 /** Handy base class for writing COM objects, providing ref-counting and a basic QueryInterface method.
@@ -135,10 +118,11 @@ public:
 
     JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
     {
-        if (refId == __uuidof (ComClass))
-            return this->template castToType <ComClass> (result);
+        if (refId == __uuidof (ComClass))   { this->AddRef(); *result = dynamic_cast <ComClass*> (this); return S_OK; }
+        if (refId == IID_IUnknown)          { this->AddRef(); *result = dynamic_cast <IUnknown*> (this); return S_OK; }
 
-        return ComBaseClassHelperBase <ComClass>::QueryInterface (refId, result);
+        *result = 0;
+        return E_NOINTERFACE;
     }
 };
 

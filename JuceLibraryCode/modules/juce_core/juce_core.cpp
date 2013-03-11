@@ -80,7 +80,6 @@
 
 #if JUCE_MAC || JUCE_IOS
  #include <xlocale.h>
- #include <mach/mach.h>
 #endif
 
 #if JUCE_ANDROID
@@ -92,6 +91,9 @@
 namespace juce
 {
 
+// START_AUTOINCLUDE containers/*.cpp, files/*.cpp, json/*.cpp, logging/*.cpp, maths/*.cpp,
+// memory/*.cpp, misc/*.cpp, network/*.cpp, streams/*.cpp, system/*.cpp, text/*.cpp, threads/*.cpp,
+// time/*.cpp, unit_tests/*.cpp, xml/*.cpp, zip/juce_GZIPD*.cpp, zip/juce_GZIPC*.cpp, zip/juce_Zip*.cpp
 #include "containers/juce_AbstractFifo.cpp"
 #include "containers/juce_DynamicObject.cpp"
 #include "containers/juce_NamedValueSet.cpp"
@@ -146,6 +148,7 @@ namespace juce
 #include "zip/juce_GZIPDecompressorInputStream.cpp"
 #include "zip/juce_GZIPCompressorOutputStream.cpp"
 #include "zip/juce_ZipFile.cpp"
+// END_AUTOINCLUDE
 
 //==============================================================================
 #if JUCE_MAC || JUCE_IOS
@@ -194,7 +197,4 @@ namespace juce
 #include "native/juce_android_Threads.cpp"
 
 #endif
-
-#include "threads/juce_HighResolutionTimer.cpp"
-
 }

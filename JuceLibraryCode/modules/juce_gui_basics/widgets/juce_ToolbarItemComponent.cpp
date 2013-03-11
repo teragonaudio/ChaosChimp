@@ -45,23 +45,24 @@ public:
 
     void paint (Graphics& g)
     {
-        if (ToolbarItemComponent* const tc = getToolbarItemComponent())
+        ToolbarItemComponent* const tc = getToolbarItemComponent();
+
+        if (isMouseOverOrDragging()
+              && tc != nullptr
+              && tc->getEditingMode() == ToolbarItemComponent::editableOnToolbar)
         {
-            if (isMouseOverOrDragging()
-                  && tc->getEditingMode() == ToolbarItemComponent::editableOnToolbar)
-            {
-                g.setColour (findColour (Toolbar::editingModeOutlineColourId, true));
-                g.drawRect (0, 0, getWidth(), getHeight(),
-                            jmin (2, (getWidth() - 1) / 2, (getHeight() - 1) / 2));
-            }
+            g.setColour (findColour (Toolbar::editingModeOutlineColourId, true));
+            g.drawRect (0, 0, getWidth(), getHeight(),
+                        jmin (2, (getWidth() - 1) / 2, (getHeight() - 1) / 2));
         }
     }
 
     void mouseDown (const MouseEvent& e)
     {
         isDragging = false;
+        ToolbarItemComponent* const tc = getToolbarItemComponent();
 
-        if (ToolbarItemComponent* const tc = getToolbarItemComponent())
+        if (tc != nullptr)
         {
             tc->dragOffsetX = e.x;
             tc->dragOffsetY = e.y;
@@ -73,12 +74,15 @@ public:
         if (! (isDragging || e.mouseWasClicked()))
         {
             isDragging = true;
+            DragAndDropContainer* const dnd = DragAndDropContainer::findParentDragContainerFor (this);
 
-            if (DragAndDropContainer* const dnd = DragAndDropContainer::findParentDragContainerFor (this))
+            if (dnd != nullptr)
             {
                 dnd->startDragging (Toolbar::toolbarDragDescriptor, getParentComponent(), Image::null, true);
 
-                if (ToolbarItemComponent* const tc = getToolbarItemComponent())
+                ToolbarItemComponent* const tc = getToolbarItemComponent();
+
+                if (tc != nullptr)
                 {
                     tc->isBeingDragged = true;
 
@@ -92,12 +96,15 @@ public:
     void mouseUp (const MouseEvent&)
     {
         isDragging = false;
+        ToolbarItemComponent* const tc = getToolbarItemComponent();
 
-        if (ToolbarItemComponent* const tc = getToolbarItemComponent())
+        if (tc != nullptr)
         {
             tc->isBeingDragged = false;
 
-            if (Toolbar* const tb = tc->getToolbar())
+            Toolbar* const tb = tc->getToolbar();
+
+            if (tb != nullptr)
                 tb->updateAllItemPositions (true);
             else if (tc->getEditingMode() == ToolbarItemComponent::editableOnToolbar)
                 delete tc;

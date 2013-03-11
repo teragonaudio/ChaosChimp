@@ -40,8 +40,7 @@ namespace DirectWriteTypeLayout
 
         JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
         {
-            if (refId == __uuidof (IDWritePixelSnapping))
-                return castToType <IDWritePixelSnapping> (result);
+            if (refId == __uuidof (IDWritePixelSnapping))   { AddRef(); *result = dynamic_cast <IDWritePixelSnapping*> (this); return S_OK; }
 
             return ComBaseClassHelper<IDWriteTextRenderer>::QueryInterface (refId, result);
         }
@@ -220,7 +219,9 @@ namespace DirectWriteTypeLayout
         range.startPosition = attr.range.getStart();
         range.length = jmin (attr.range.getLength(), textLen - attr.range.getStart());
 
-        if (const Font* const font = attr.getFont())
+        const Font* const font = attr.getFont();
+
+        if (font != nullptr)
         {
             BOOL fontFound = false;
             uint32 fontIndex;
@@ -254,13 +255,13 @@ namespace DirectWriteTypeLayout
             textLayout->SetFontSize (font->getHeight() * fontHeightToEmSizeFactor, range);
         }
 
-        if (const Colour* const colour = attr.getColour())
+        if (attr.getColour() != nullptr)
         {
             ComSmartPtr<ID2D1SolidColorBrush> d2dBrush;
-            renderTarget->CreateSolidColorBrush (D2D1::ColorF (D2D1::ColorF (colour->getFloatRed(),
-                                                                             colour->getFloatGreen(),
-                                                                             colour->getFloatBlue(),
-                                                                             colour->getFloatAlpha())),
+            renderTarget->CreateSolidColorBrush (D2D1::ColorF (D2D1::ColorF (attr.getColour()->getFloatRed(),
+                                                                             attr.getColour()->getFloatGreen(),
+                                                                             attr.getColour()->getFloatBlue(),
+                                                                             attr.getColour()->getFloatAlpha())),
                                                  d2dBrush.resetAndGetPointerAddress());
 
             // We need to call SetDrawingEffect with a legimate brush to get DirectWrite to break text based on colours

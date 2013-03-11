@@ -2137,8 +2137,8 @@ private:
     {
         if (MessageManager::getInstance()->currentThreadHasLockedMessageManager())
             return callback (userData);
-
-        return MessageManager::getInstance()->callFunctionOnMessageThread (callback, userData);
+        else
+            return MessageManager::getInstance()->callFunctionOnMessageThread (callback, userData);
     }
 
     static Point<int> getPointFromLParam (LPARAM lParam) noexcept
@@ -2915,17 +2915,13 @@ int JUCE_CALLTYPE NativeMessageBox::showYesNoCancelBox (AlertWindow::AlertIconTy
 }
 
 //==============================================================================
-bool Desktop::addMouseInputSource()
+void Desktop::createMouseInputSources()
 {
-    const int numSources = mouseSources.size();
+    mouseSources.add (new MouseInputSource (0, true));
 
-    if (numSources == 0 || canUseMultiTouch())
-    {
-        mouseSources.add (new MouseInputSource (numSources, numSources == 0));
-        return true;
-    }
-
-    return false;
+    if (canUseMultiTouch())
+        for (int i = 1; i <= 10; ++i)
+            mouseSources.add (new MouseInputSource (i, false));
 }
 
 Point<int> MouseInputSource::getCurrentMousePosition()
@@ -3025,7 +3021,7 @@ void SystemClipboard::copyTextToClipboard (const String& text)
                 {
                     if (WCHAR* const data = static_cast <WCHAR*> (GlobalLock (bufH)))
                     {
-                        text.copyToUTF16 (data, bytesNeeded);
+                        text.copyToUTF16 (data, (int) bytesNeeded);
                         GlobalUnlock (bufH);
 
                         SetClipboardData (CF_UNICODETEXT, bufH);

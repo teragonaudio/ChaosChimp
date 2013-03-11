@@ -99,7 +99,7 @@ void Label::setFont (const Font& newFont)
     }
 }
 
-Font Label::getFont() const noexcept
+const Font& Label::getFont() const noexcept
 {
     return font;
 }
@@ -161,11 +161,9 @@ void Label::attachToComponent (Component* owner, const bool onLeft)
 
 void Label::componentMovedOrResized (Component& component, bool /*wasMoved*/, bool /*wasResized*/)
 {
-    const Font f (getLookAndFeel().getLabelFont (*this));
-
     if (leftOfOwnerComp)
     {
-        setSize (jmin (f.getStringWidth (textValue.toString()) + 8, component.getX()),
+        setSize (jmin (getFont().getStringWidth (textValue.toString()) + 8, component.getX()),
                  component.getHeight());
 
         setTopRightPosition (component.getX(), component.getY());
@@ -173,7 +171,7 @@ void Label::componentMovedOrResized (Component& component, bool /*wasMoved*/, bo
     else
     {
         setSize (component.getWidth(),
-                 8 + roundToInt (f.getHeight()));
+                 8 + roundToInt (getFont().getHeight()));
 
         setTopLeftPosition (component.getX(), component.getY() - getHeight());
     }
@@ -181,8 +179,8 @@ void Label::componentMovedOrResized (Component& component, bool /*wasMoved*/, bo
 
 void Label::componentParentHierarchyChanged (Component& component)
 {
-    if (Component* parent = component.getParentComponent())
-        parent->addChildComponent (this);
+    if (component.getParentComponent() != nullptr)
+        component.getParentComponent()->addChildComponent (this);
 }
 
 void Label::componentVisibilityChanged (Component& component)
@@ -287,7 +285,7 @@ bool Label::isBeingEdited() const noexcept
 TextEditor* Label::createEditorComponent()
 {
     TextEditor* const ed = new TextEditor (getName());
-    ed->applyFontToAllText (getLookAndFeel().getLabelFont (*this));
+    ed->setFont (font);
     copyAllExplicitColoursTo (*ed);
     return ed;
 }

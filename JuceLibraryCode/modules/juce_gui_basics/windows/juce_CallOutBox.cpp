@@ -36,7 +36,8 @@ CallOutBox::CallOutBox (Component& c, const Rectangle<int>& area, Component* con
     }
     else
     {
-        setAlwaysOnTop (juce_areThereAnyAlwaysOnTopWindows());
+        if (! JUCEApplication::isStandaloneApp())
+            setAlwaysOnTop (true); // for a plugin, make it always-on-top because the host windows are often top-level
 
         updatePosition (area, Desktop::getInstance().getDisplays()
                                 .getDisplayContaining (area.getCentre()).userArea);

@@ -59,7 +59,7 @@ namespace WindowsFileHelpers
         const size_t numBytes = CharPointer_UTF16::getBytesRequiredFor (path.getCharPointer()) + 4;
         HeapBlock<WCHAR> pathCopy;
         pathCopy.calloc (numBytes, 1);
-        path.copyToUTF16 (pathCopy, numBytes);
+        path.copyToUTF16 (pathCopy, (int) numBytes);
 
         if (PathStripToRoot (pathCopy))
             path = static_cast <const WCHAR*> (pathCopy);
@@ -184,7 +184,7 @@ bool File::moveToTrash() const
     const size_t numBytes = CharPointer_UTF16::getBytesRequiredFor (fullPath.getCharPointer()) + 8;
     HeapBlock<WCHAR> doubleNullTermPath;
     doubleNullTermPath.calloc (numBytes, 1);
-    fullPath.copyToUTF16 (doubleNullTermPath, numBytes);
+    fullPath.copyToUTF16 (doubleNullTermPath, (int) numBytes);
 
     SHFILEOPSTRUCT fos = { 0 };
     fos.wFunc = FO_DELETE;
@@ -278,7 +278,7 @@ void FileOutputStream::closeHandle()
     CloseHandle ((HANDLE) fileHandle);
 }
 
-ssize_t FileOutputStream::writeInternal (const void* buffer, size_t numBytes)
+int FileOutputStream::writeInternal (const void* buffer, int numBytes)
 {
     if (fileHandle != nullptr)
     {
@@ -286,7 +286,7 @@ ssize_t FileOutputStream::writeInternal (const void* buffer, size_t numBytes)
         if (! WriteFile ((HANDLE) fileHandle, buffer, (DWORD) numBytes, &actualNum, 0))
             status = WindowsFileHelpers::getResultForLastError();
 
-        return (ssize_t) actualNum;
+        return (int) actualNum;
     }
 
     return 0;
@@ -310,17 +310,12 @@ Result FileOutputStream::truncate()
 }
 
 //==============================================================================
-void MemoryMappedFile::openInternal (const File& file, AccessMode mode)
+MemoryMappedFile::MemoryMappedFile (const File& file, MemoryMappedFile::AccessMode mode)
+    : address (nullptr),
+      length (0),
+      fileHandle (nullptr)
 {
     jassert (mode == readOnly || mode == readWrite);
-
-    if (range.getStart() > 0)
-    {
-        SYSTEM_INFO systemInfo;
-        GetNativeSystemInfo (&systemInfo);
-
-        range.setStart (range.getStart() - (range.getStart() % systemInfo.dwAllocationGranularity));
-    }
 
     DWORD accessMode = GENERIC_READ, createType = OPEN_EXISTING;
     DWORD protect = PAGE_READONLY, access = FILE_MAP_READ;
@@ -339,16 +334,15 @@ void MemoryMappedFile::openInternal (const File& file, AccessMode mode)
     if (h != INVALID_HANDLE_VALUE)
     {
         fileHandle = (void*) h;
+        const int64 fileSize = file.getSize();
 
-        HANDLE mappingHandle = CreateFileMapping (h, 0, protect, (DWORD) (range.getEnd() >> 32), (DWORD) range.getEnd(), 0);
-
+        HANDLE mappingHandle = CreateFileMapping (h, 0, protect, (DWORD) (fileSize >> 32), (DWORD) fileSize, 0);
         if (mappingHandle != 0)
         {
-            address = MapViewOfFile (mappingHandle, access, (DWORD) (range.getStart() >> 32),
-                                     (DWORD) range.getStart(), (SIZE_T) range.getLength());
+            address = MapViewOfFile (mappingHandle, access, 0, 0, (SIZE_T) fileSize);
 
-            if (address == nullptr)
-                range = Range<int64>();
+            if (address != nullptr)
+                length = (size_t) fileSize;
 
             CloseHandle (mappingHandle);
         }
@@ -486,8 +480,8 @@ bool File::isOnHardDisk() const
 
     if (fullPath.toLowerCase()[0] <= 'b' && fullPath[1] == ':')
         return n != DRIVE_REMOVABLE;
-
-    return n != DRIVE_CDROM && n != DRIVE_REMOTE;
+    else
+        return n != DRIVE_CDROM && n != DRIVE_REMOTE;
 }
 
 bool File::isOnRemovableDrive() const
@@ -917,7 +911,7 @@ private:
         return false;
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pimpl)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pimpl);
 };
 
 void NamedPipe::close()

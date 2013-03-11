@@ -282,7 +282,7 @@ public:
 
         @see TextEditor::addListener
     */
-    class JUCE_API  Listener
+    class Listener
     {
     public:
         /** Destructor. */
@@ -532,7 +532,7 @@ public:
     /** Base class for input filters that can be applied to a TextEditor to restrict
         the text that can be entered.
     */
-    class JUCE_API  InputFilter
+    class InputFilter
     {
     public:
         InputFilter() {}

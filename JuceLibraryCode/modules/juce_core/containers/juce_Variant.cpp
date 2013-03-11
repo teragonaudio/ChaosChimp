@@ -211,10 +211,10 @@ public:
     void writeToStream (const ValueUnion& data, OutputStream& output) const
     {
         const String* const s = getString (data);
-        const size_t len = s->getNumBytesAsUTF8() + 1;
-        HeapBlock<char> temp (len);
+        const int len = s->getNumBytesAsUTF8() + 1;
+        HeapBlock<char> temp ((size_t) len);
         s->copyToUTF8 (temp, len);
-        output.writeCompressedInt ((int) (len + 1));
+        output.writeCompressedInt (len + 1);
         output.writeByte (varMarker_String);
         output.write (temp, len);
     }

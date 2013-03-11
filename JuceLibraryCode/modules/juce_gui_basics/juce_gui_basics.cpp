@@ -129,8 +129,6 @@
 //==============================================================================
 namespace juce
 {
-    extern bool juce_areThereAnyAlwaysOnTopWindows();
-
 
 // START_AUTOINCLUDE components/*.cpp, mouse/*.cpp, keyboard/*.cpp, buttons/*.cpp,
 // drawables/*.cpp, filebrowser/*.cpp, layout/*.cpp, lookandfeel/*.cpp,

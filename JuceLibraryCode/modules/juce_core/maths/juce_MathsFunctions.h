@@ -361,6 +361,10 @@ inline int roundToInt (const FloatType value) noexcept
    #else
     return n.asInt [0];
    #endif
+
+  #ifdef __INTEL_COMPILER
+   #pragma float_control (pop)
+  #endif
 }
 
 #if JUCE_MSVC
@@ -377,10 +381,6 @@ inline int roundToInt (const FloatType value) noexcept
 */
 inline int roundToIntAccurate (const double value) noexcept
 {
-   #ifdef __INTEL_COMPILER
-    #pragma float_control (pop)
-   #endif
-
     return roundToInt (value + 1.5e-8);
 }
 
@@ -441,7 +441,7 @@ inline int nextPowerOfTwo (int n) noexcept
     The divisor must be greater than zero.
 */
 template <typename IntegerType>
-IntegerType negativeAwareModulo (IntegerType dividend, const IntegerType divisor) noexcept
+int negativeAwareModulo (IntegerType dividend, const IntegerType divisor) noexcept
 {
     jassert (divisor > 0);
     dividend %= divisor;

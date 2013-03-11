@@ -189,8 +189,8 @@ Rectangle<float> DrawableShape::getDrawableBounds() const
 {
     if (isStrokeVisible())
         return strokePath.getBounds();
-
-    return path.getBounds();
+    else
+        return path.getBounds();
 }
 
 bool DrawableShape::hitTest (int x, int y)

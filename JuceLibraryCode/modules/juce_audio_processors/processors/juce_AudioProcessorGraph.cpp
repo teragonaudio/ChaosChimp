@@ -789,8 +789,9 @@ private:
                                int recursionCheck) const noexcept
     {
         int index;
+        const Entry* const entry = findEntry (possibleDestinationId, index);
 
-        if (const Entry* const entry = findEntry (possibleDestinationId, index))
+        if (entry != nullptr)
         {
             const SortedSet<uint32>& srcNodes = entry->srcNodes;
 
@@ -857,14 +858,14 @@ struct ConnectionSorter
     static int compareElements (const AudioProcessorGraph::Connection* const first,
                                 const AudioProcessorGraph::Connection* const second) noexcept
     {
-        if (first->sourceNodeId < second->sourceNodeId)                return -1;
-        if (first->sourceNodeId > second->sourceNodeId)                return 1;
-        if (first->destNodeId < second->destNodeId)                    return -1;
-        if (first->destNodeId > second->destNodeId)                    return 1;
-        if (first->sourceChannelIndex < second->sourceChannelIndex)    return -1;
-        if (first->sourceChannelIndex > second->sourceChannelIndex)    return 1;
-        if (first->destChannelIndex < second->destChannelIndex)        return -1;
-        if (first->destChannelIndex > second->destChannelIndex)        return 1;
+        if      (first->sourceNodeId < second->sourceNodeId)                return -1;
+        else if (first->sourceNodeId > second->sourceNodeId)                return 1;
+        else if (first->destNodeId < second->destNodeId)                    return -1;
+        else if (first->destNodeId > second->destNodeId)                    return 1;
+        else if (first->sourceChannelIndex < second->sourceChannelIndex)    return -1;
+        else if (first->sourceChannelIndex > second->sourceChannelIndex)    return 1;
+        else if (first->destChannelIndex < second->destChannelIndex)        return -1;
+        else if (first->destChannelIndex > second->destChannelIndex)        return 1;
 
         return 0;
     }
@@ -886,7 +887,7 @@ AudioProcessorGraph::Node::Node (const uint32 nodeId_, AudioProcessor* const pro
       processor (processor_),
       isPrepared (false)
 {
-    jassert (processor != nullptr);
+    jassert (processor_ != nullptr);
 }
 
 void AudioProcessorGraph::Node::prepare (const double sampleRate, const int blockSize,
@@ -916,8 +917,10 @@ void AudioProcessorGraph::Node::unprepare()
 
 void AudioProcessorGraph::Node::setParentGraph (AudioProcessorGraph* const graph) const
 {
-    if (AudioProcessorGraph::AudioGraphIOProcessor* const ioProc
-            = dynamic_cast <AudioProcessorGraph::AudioGraphIOProcessor*> (processor.get()))
+    AudioProcessorGraph::AudioGraphIOProcessor* const ioProc
+        = dynamic_cast <AudioProcessorGraph::AudioGraphIOProcessor*> (processor.get());
+
+    if (ioProc != nullptr)
         ioProc->setParentGraph (graph);
 }
 
@@ -978,8 +981,6 @@ AudioProcessorGraph::Node* AudioProcessorGraph::addNode (AudioProcessor* const n
         if (nodeId > lastNodeId)
             lastNodeId = nodeId;
     }
-
-    newProcessor->setPlayHead (getPlayHead());
 
     Node* const n = new Node (nodeId, newProcessor);
     nodes.add (n);
@@ -1169,7 +1170,7 @@ void AudioProcessorGraph::clearRenderingSequence()
     Array<void*> oldOps;
 
     {
-        const ScopedLock sl (getCallbackLock());
+        const ScopedLock sl (renderLock);
         renderingOps.swapWithArray (oldOps);
     }
 
@@ -1233,7 +1234,7 @@ void AudioProcessorGraph::buildRenderingSequence()
 
     {
         // swap over to the new rendering sequence..
-        const ScopedLock sl (getCallbackLock());
+        const ScopedLock sl (renderLock);
 
         renderingBuffers.setSize (numRenderingBuffersNeeded, getBlockSize());
         renderingBuffers.clear();
@@ -1282,17 +1283,11 @@ void AudioProcessorGraph::releaseResources()
     currentMidiOutputBuffer.clear();
 }
 
-void AudioProcessorGraph::reset()
-{
-    const ScopedLock sl (getCallbackLock());
-
-    for (int i = 0; i < nodes.size(); ++i)
-        nodes.getUnchecked(i)->getProcessor()->reset();
-}
-
 void AudioProcessorGraph::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     const int numSamples = buffer.getNumSamples();
+
+    const ScopedLock sl (renderLock);
 
     currentAudioInputBuffer = &buffer;
     currentAudioOutputBuffer.setSize (jmax (1, buffer.getNumChannels()), numSamples);

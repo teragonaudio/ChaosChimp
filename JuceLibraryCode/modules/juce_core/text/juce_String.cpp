@@ -428,44 +428,55 @@ namespace NumberToStringConverters
 
     static char* doubleToString (char* buffer, const int numChars, double n, int numDecPlaces, size_t& len) noexcept
     {
-        if (numDecPlaces > 0 && numDecPlaces < 7 && n > -1.0e20 && n < 1.0e20)
+        if (numDecPlaces > 0)
         {
-            char* const end = buffer + numChars;
-            char* t = end;
-            int64 v = (int64) (pow (10.0, numDecPlaces) * std::abs (n) + 0.5);
-            *--t = (char) 0;
-
-            while (numDecPlaces >= 0 || v > 0)
+            if (numDecPlaces < 7 && n > -1.0e20 && n < 1.0e20)
             {
-                if (numDecPlaces == 0)
-                    *--t = '.';
+                char* const end = buffer + numChars;
+                char* t = end;
+                int64 v = (int64) (pow (10.0, numDecPlaces) * std::abs (n) + 0.5);
+                *--t = (char) 0;
 
-                *--t = (char) ('0' + (v % 10));
+                while (numDecPlaces >= 0 || v > 0)
+                {
+                    if (numDecPlaces == 0)
+                        *--t = '.';
 
-                v /= 10;
-                --numDecPlaces;
+                    *--t = (char) ('0' + (v % 10));
+
+                    v /= 10;
+                    --numDecPlaces;
+                }
+
+                if (n < 0)
+                    *--t = '-';
+
+                len = (size_t) (end - t - 1);
+                return t;
             }
-
-            if (n < 0)
-                *--t = '-';
-
-            len = (size_t) (end - t - 1);
-            return t;
+            else
+            {
+                // Use a locale-free sprintf where possible (not available on linux AFAICT)
+               #if JUCE_MSVC
+                len = (size_t) _sprintf_l (buffer, "%.*f", _create_locale (LC_NUMERIC, "C"), numDecPlaces, n);
+               #elif JUCE_MAC || JUCE_IOS
+                len = (size_t)  sprintf_l (buffer, nullptr, "%.*f", numDecPlaces, n);
+               #else
+                len = (size_t)  sprintf (buffer, "%.*f", numDecPlaces, n);
+               #endif
+            }
         }
-
-       // Use a locale-free sprintf where possible (not available on linux AFAICT)
-       #if JUCE_MSVC
-        static _locale_t cLocale = _create_locale (LC_NUMERIC, "C");
-
-        len = (size_t) (numDecPlaces > 0 ? _sprintf_l (buffer, "%.*f", cLocale, numDecPlaces, n)
-                                         : _sprintf_l (buffer, "%.9g", cLocale, n));
-       #elif JUCE_MAC || JUCE_IOS
-        len = (size_t) (numDecPlaces > 0 ? sprintf_l (buffer, nullptr, "%.*f", numDecPlaces, n)
-                                         : sprintf_l (buffer, nullptr, "%.9g", n));
-       #else
-        len = (size_t) (numDecPlaces > 0 ? sprintf (buffer, "%.*f", numDecPlaces, n)
-                                         : sprintf (buffer, "%.9g", n));
-       #endif
+        else
+        {
+            // Use a locale-free sprintf where possible (not available on linux AFAICT)
+           #if JUCE_MSVC
+            len = (size_t) _sprintf_l (buffer, "%.9g", _create_locale (LC_NUMERIC, "C"), n);
+           #elif JUCE_MAC || JUCE_IOS
+            len = (size_t)  sprintf_l (buffer, nullptr, "%.9g", n);
+           #else
+            len = (size_t)  sprintf (buffer, "%.9g", n);
+           #endif
+        }
 
         return buffer;
     }
@@ -731,7 +742,7 @@ JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const double number)     
 
 JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const String& text)
 {
-    const size_t numBytes = text.getNumBytesAsUTF8();
+    const int numBytes = text.getNumBytesAsUTF8();
 
    #if (JUCE_STRING_UTF_TYPE == 8)
     stream.write (text.getCharPointer().getAddress(), numBytes);
@@ -1556,8 +1567,7 @@ String String::trim() const
 
         if (trimmedEnd <= start)
             return empty;
-
-        if (text < start || trimmedEnd < end)
+        else if (text < start || trimmedEnd < end)
             return String (start, trimmedEnd);
     }
 
@@ -1911,13 +1921,15 @@ String String::createStringFromData (const void* const data_, const int size)
     const uint8* const data = static_cast <const uint8*> (data_);
 
     if (size <= 0 || data == nullptr)
+    {
         return empty;
-
-    if (size == 1)
+    }
+    else if (size == 1)
+    {
         return charToString ((juce_wchar) data[0]);
-
-    if ((data[0] == (uint8) CharPointer_UTF16::byteOrderMarkBE1 && data[1] == (uint8) CharPointer_UTF16::byteOrderMarkBE2)
-         || (data[0] == (uint8) CharPointer_UTF16::byteOrderMarkLE1 && data[1] == (uint8) CharPointer_UTF16::byteOrderMarkLE2))
+    }
+    else if ((data[0] == (uint8) CharPointer_UTF16::byteOrderMarkBE1 && data[1] == (uint8) CharPointer_UTF16::byteOrderMarkBE2)
+          || (data[0] == (uint8) CharPointer_UTF16::byteOrderMarkLE1 && data[1] == (uint8) CharPointer_UTF16::byteOrderMarkLE2))
     {
         const bool bigEndian = (data[0] == (uint8) CharPointer_UTF16::byteOrderMarkBE1);
         const int numChars = size / 2 - 1;
@@ -1940,18 +1952,20 @@ String String::createStringFromData (const void* const data_, const int size)
         builder.write (0);
         return builder.result;
     }
+    else
+    {
+        const uint8* start = data;
+        const uint8* end = data + size;
 
-    const uint8* start = data;
-    const uint8* end = data + size;
+        if (size >= 3
+              && data[0] == (uint8) CharPointer_UTF8::byteOrderMark1
+              && data[1] == (uint8) CharPointer_UTF8::byteOrderMark2
+              && data[2] == (uint8) CharPointer_UTF8::byteOrderMark3)
+            start += 3;
 
-    if (size >= 3
-          && data[0] == (uint8) CharPointer_UTF8::byteOrderMark1
-          && data[1] == (uint8) CharPointer_UTF8::byteOrderMark2
-          && data[2] == (uint8) CharPointer_UTF8::byteOrderMark3)
-        start += 3;
-
-    return String (CharPointer_UTF8 ((const char*) start),
-                   CharPointer_UTF8 ((const char*) end));
+        return String (CharPointer_UTF8 ((const char*) start),
+                       CharPointer_UTF8 ((const char*) end));
+    }
 }
 
 //==============================================================================
@@ -2020,45 +2034,46 @@ const wchar_t* String::toWideCharPointer() const
 template <class CharPointerType_Src, class CharPointerType_Dest>
 struct StringCopier
 {
-    static size_t copyToBuffer (const CharPointerType_Src& source, typename CharPointerType_Dest::CharType* const buffer, const size_t maxBufferSizeBytes)
+    static int copyToBuffer (const CharPointerType_Src& source, typename CharPointerType_Dest::CharType* const buffer, const int maxBufferSizeBytes)
     {
-        jassert (((ssize_t) maxBufferSizeBytes) >= 0); // keep this value positive!
+        jassert (maxBufferSizeBytes >= 0); // keep this value positive, or no characters will be copied!
 
         if (buffer == nullptr)
-            return CharPointerType_Dest::getBytesRequiredFor (source) + sizeof (typename CharPointerType_Dest::CharType);
+            return (int) (CharPointerType_Dest::getBytesRequiredFor (source) + sizeof (typename CharPointerType_Dest::CharType));
 
         return CharPointerType_Dest (buffer).writeWithDestByteLimit (source, maxBufferSizeBytes);
     }
 };
 
-size_t String::copyToUTF8 (CharPointer_UTF8::CharType* const buffer, size_t maxBufferSizeBytes) const noexcept
+int String::copyToUTF8 (CharPointer_UTF8::CharType* const buffer, const int maxBufferSizeBytes) const noexcept
 {
     return StringCopier <CharPointerType, CharPointer_UTF8>::copyToBuffer (text, buffer, maxBufferSizeBytes);
 }
 
-size_t String::copyToUTF16 (CharPointer_UTF16::CharType* const buffer, size_t maxBufferSizeBytes) const noexcept
+int String::copyToUTF16 (CharPointer_UTF16::CharType* const buffer, int maxBufferSizeBytes) const noexcept
 {
     return StringCopier <CharPointerType, CharPointer_UTF16>::copyToBuffer (text, buffer, maxBufferSizeBytes);
 }
 
-size_t String::copyToUTF32 (CharPointer_UTF32::CharType* const buffer, size_t maxBufferSizeBytes) const noexcept
+int String::copyToUTF32 (CharPointer_UTF32::CharType* const buffer, int maxBufferSizeBytes) const noexcept
 {
     return StringCopier <CharPointerType, CharPointer_UTF32>::copyToBuffer (text, buffer, maxBufferSizeBytes);
 }
 
 //==============================================================================
-size_t String::getNumBytesAsUTF8() const noexcept
+int String::getNumBytesAsUTF8() const noexcept
 {
-    return CharPointer_UTF8::getBytesRequiredFor (text);
+    return (int) CharPointer_UTF8::getBytesRequiredFor (text);
 }
 
 String String::fromUTF8 (const char* const buffer, int bufferSizeBytes)
 {
     if (buffer != nullptr)
     {
-        if (bufferSizeBytes < 0) return String (CharPointer_UTF8 (buffer));
-        if (bufferSizeBytes > 0) return String (CharPointer_UTF8 (buffer),
-                                                CharPointer_UTF8 (buffer + bufferSizeBytes));
+        if (bufferSizeBytes < 0)
+            return String (CharPointer_UTF8 (buffer));
+        else if (bufferSizeBytes > 0)
+            return String (CharPointer_UTF8 (buffer), CharPointer_UTF8 (buffer + bufferSizeBytes));
     }
 
     return String::empty;

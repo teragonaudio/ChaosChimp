@@ -292,20 +292,6 @@ void AudioSampleBuffer::applyGain (const int startSample,
         applyGain (i, startSample, numSamples, gain);
 }
 
-void AudioSampleBuffer::applyGain (const float gain) noexcept
-{
-    applyGain (0, size, gain);
-}
-
-void AudioSampleBuffer::applyGainRamp (const int startSample,
-                                       const int numSamples,
-                                       const float startGain,
-                                       const float endGain) noexcept
-{
-    for (int i = 0; i < numChannels; ++i)
-        applyGainRamp (i, startSample, numSamples, startGain, endGain);
-}
-
 void AudioSampleBuffer::addFrom (const int destChannel,
                                  const int destStartSample,
                                  const AudioSampleBuffer& source,

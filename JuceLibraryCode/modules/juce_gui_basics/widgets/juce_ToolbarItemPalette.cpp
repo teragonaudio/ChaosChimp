@@ -47,15 +47,14 @@ ToolbarItemPalette::~ToolbarItemPalette()
 //==============================================================================
 void ToolbarItemPalette::addComponent (const int itemId, const int index)
 {
-    if (ToolbarItemComponent* const tc = Toolbar::createItem (factory, itemId))
+    ToolbarItemComponent* const tc = Toolbar::createItem (factory, itemId);
+    jassert (tc != nullptr);
+
+    if (tc != nullptr)
     {
         items.insert (index, tc);
         viewport.getViewedComponent()->addAndMakeVisible (tc, index);
         tc->setEditingMode (ToolbarItemComponent::editableOnPalette);
-    }
-    else
-    {
-        jassertfalse;
     }
 }
 

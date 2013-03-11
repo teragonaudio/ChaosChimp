@@ -94,9 +94,10 @@ public:
         This is handy if you want to show the user which file is currently getting
         scanned.
     */
-    String getNextPluginFileThatWillBeScanned() const;
+    const String getNextPluginFileThatWillBeScanned() const;
 
-    /** Returns the estimated progress, between 0 and 1. */
+    /** Returns the estimated progress, between 0 and 1.
+    */
     float getProgress() const                                       { return progress; }
 
     /** This returns a list of all the filenames of things that looked like being

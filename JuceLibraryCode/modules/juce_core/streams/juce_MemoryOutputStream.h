@@ -107,11 +107,11 @@ public:
     */
     void flush();
 
-    bool write (const void* buffer, size_t howMany);
+    bool write (const void* buffer, int howMany);
     int64 getPosition()                                 { return position; }
     bool setPosition (int64 newPosition);
     int writeFromInputStream (InputStream& source, int64 maxNumBytesToWrite);
-    void writeRepeatedByte (uint8 byte, size_t numTimesToRepeat);
+    void writeRepeatedByte (uint8 byte, int numTimesToRepeat);
 
 private:
     //==============================================================================
@@ -120,7 +120,7 @@ private:
     size_t position, size;
 
     void trimExternalBlockSize();
-    void prepareToWrite (size_t);
+    void prepareToWrite (int numBytes);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MemoryOutputStream)
 };

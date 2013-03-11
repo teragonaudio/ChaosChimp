@@ -111,9 +111,6 @@
  #pragma comment(lib, PT_LIB_PATH "DigiExt.lib")
  #pragma comment(lib, PT_LIB_PATH "DSI.lib")
  #pragma comment(lib, PT_LIB_PATH "PluginLib.lib")
- #pragma comment(lib, PT_LIB_PATH "DSPManager.lib")
- #pragma comment(lib, PT_LIB_PATH "DSPManagerClientLib.lib")
- #pragma comment(lib, PT_LIB_PATH "RTASClientLib.lib")
 #endif
 
 #undef Component
@@ -848,7 +845,7 @@ private:
             // Pro-tools expects all your parameters to have valid names!
             jassert (juceFilter->getParameterName (index).isNotEmpty());
 
-            juceFilter->getParameterName (index).copyToUTF8 (name, (size_t) maxLength);
+            juceFilter->getParameterName (index).copyToUTF8 (name, maxLength);
         }
 
         long GetPriority() const        { return kFicCooperativeTaskPriority; }
@@ -863,7 +860,7 @@ private:
 
         void GetValueString (char* valueString, int maxLength, long value) const
         {
-            juceFilter->getParameterText (index).copyToUTF8 (valueString, (size_t) maxLength);
+            juceFilter->getParameterText (index).copyToUTF8 (valueString, maxLength);
         }
 
         Cmn_Bool IsAutomatable() const

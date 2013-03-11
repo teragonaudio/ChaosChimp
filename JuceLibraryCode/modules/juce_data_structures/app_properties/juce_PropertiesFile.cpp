@@ -171,8 +171,8 @@ bool PropertiesFile::save()
 
     if (options.storageFormat == storeAsXML)
         return saveAsXml();
-
-    return saveAsBinary();
+    else
+        return saveAsBinary();
 }
 
 bool PropertiesFile::loadAsXml()
@@ -223,7 +223,9 @@ bool PropertiesFile::saveAsXml()
         e->setAttribute (PropertyFileConstants::nameAttribute, getAllProperties().getAllKeys() [i]);
 
         // if the value seems to contain xml, store it as such..
-        if (XmlElement* const childElement = XmlDocument::parse (getAllProperties().getAllValues() [i]))
+        XmlElement* const childElement = XmlDocument::parse (getAllProperties().getAllValues() [i]);
+
+        if (childElement != nullptr)
             e->addChildElement (childElement);
         else
             e->setAttribute (PropertyFileConstants::valueAttribute,

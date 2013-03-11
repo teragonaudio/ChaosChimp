@@ -80,37 +80,22 @@ void ComponentPeer::updateCurrentModifiers() noexcept
 }
 
 //==============================================================================
-MouseInputSource* ComponentPeer::getOrCreateMouseInputSource (int touchIndex)
-{
-    jassert (touchIndex >= 0 && touchIndex < 100); // sanity-check on number of fingers
-
-    Desktop& desktop = Desktop::getInstance();
-
-    for (;;)
-    {
-        if (MouseInputSource* mouse = desktop.getMouseSource (touchIndex))
-            return mouse;
-
-        if (! desktop.addMouseInputSource())
-        {
-            jassertfalse; // not enough mouse sources!
-            return nullptr;
-        }
-    }
-}
-
 void ComponentPeer::handleMouseEvent (const int touchIndex, const Point<int>& positionWithinPeer,
                                       const ModifierKeys& newMods, const int64 time)
 {
-    if (MouseInputSource* mouse = getOrCreateMouseInputSource (touchIndex))
-        mouse->handleEvent (this, positionWithinPeer, time, newMods);
+    MouseInputSource* const mouse = Desktop::getInstance().getMouseSource (touchIndex);
+    jassert (mouse != nullptr); // not enough sources!
+
+    mouse->handleEvent (this, positionWithinPeer, time, newMods);
 }
 
 void ComponentPeer::handleMouseWheel (const int touchIndex, const Point<int>& positionWithinPeer,
                                       const int64 time, const MouseWheelDetails& wheel)
 {
-    if (MouseInputSource* mouse = getOrCreateMouseInputSource (touchIndex))
-        mouse->handleWheel (this, positionWithinPeer, time, wheel);
+    MouseInputSource* const mouse = Desktop::getInstance().getMouseSource (touchIndex);
+    jassert (mouse != nullptr); // not enough sources!
+
+    mouse->handleWheel (this, positionWithinPeer, time, wheel);
 }
 
 //==============================================================================
@@ -202,9 +187,7 @@ bool ComponentPeer::handleKeyPress (const int keyCode, const juce_wchar textChar
             {
                 currentlyFocused->moveKeyboardFocusToSibling (isTab);
                 keyWasUsed = (currentlyFocused != Component::getCurrentlyFocusedComponent());
-
-                if (keyWasUsed || deletionChecker == nullptr)
-                    break;
+                break;
             }
         }
     }
@@ -552,11 +535,6 @@ void ComponentPeer::handleUserClosingWindow()
 {
     updateCurrentModifiers();
     component.userTriedToCloseWindow();
-}
-
-bool ComponentPeer::setDocumentEditedStatus (bool)
-{
-    return false;
 }
 
 //==============================================================================

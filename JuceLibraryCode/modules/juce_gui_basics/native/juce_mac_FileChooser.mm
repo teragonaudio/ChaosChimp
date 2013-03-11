@@ -91,7 +91,8 @@ public:
     TemporaryMainMenuWithStandardCommands()
         : oldMenu (MenuBarModel::getMacMainMenu()), oldAppleMenu (nullptr)
     {
-        if (const PopupMenu* appleMenu = MenuBarModel::getMacExtraAppleItemsMenu())
+        const PopupMenu* appleMenu = MenuBarModel::getMacExtraAppleItemsMenu();
+        if (appleMenu != nullptr)
             oldAppleMenu = new PopupMenu (*appleMenu);
 
         MenuBarModel::setMacMainMenu (nullptr);
@@ -148,26 +149,6 @@ private:
     SilentDummyModalComp dummyModalComponent;
 };
 
-static NSMutableArray* createAllowedTypesArray (const StringArray& filters)
-{
-    if (filters.size() == 0)
-        return nil;
-
-    NSMutableArray* filterArray = [[[NSMutableArray alloc] init] autorelease];
-
-    for (int i = 0; i < filters.size(); ++i)
-    {
-        const String f (filters[i].replace ("*.", ""));
-
-        if (f == "*")
-            return nil;
-
-        [filterArray addObject: juceStringToNS (f)];
-    }
-
-    return filterArray;
-}
-
 //==============================================================================
 void FileChooser::showPlatformDialog (Array<File>& results,
                                       const String& title,
@@ -205,7 +186,6 @@ void FileChooser::showPlatformDialog (Array<File>& results,
                                         : [NSOpenPanel openPanel];
 
     [panel setTitle: juceStringToNS (title)];
-    [panel setAllowedFileTypes: createAllowedTypesArray (*filters)];
 
     if (! isSaveDialogue)
     {
