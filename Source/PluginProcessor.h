@@ -13,14 +13,26 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginParameters.h"
-#include "RandomChaosExecutor.h"
-
+#include "ChaosProvider.h"
 
 using namespace teragon;
 
+static const char* kParamAudioDropoutsEnabled = "Audio Dropouts Enabled";
+static const char* kParamCpuHogEnabled = "CPU Hog Enabled";
+static const char* kParamCrasherEnabled = "Crasher Enabled";
+static const char* kParamFeedbackEnabled = "Feedback Enabled";
+static const char* kParamMemoryLeakerEnabled = "Memory Leaker Enabled";
+// Must be updated if another chaos provider is added
+static const int kNumChaosProviders = 5;
+
+static const char* kParamProbability = "Probability";
+static const char* kParamDuration = "Chaos Duration";
+static const char* kParamCooldown = "Cooldown Period";
+
+// Prevent causing chaos during silence
+static const float kSilenceThreshhold = 0.1f;
+
 //==============================================================================
-/**
-*/
 class ChaosChimpAudioProcessor  : public AudioProcessor
 {
 public:
@@ -44,7 +56,10 @@ public:
     int getNumParameters() { return parameters.size(); }
 
     float getParameter (int index) { return parameters[index]->getScaledValue(); }
-    void setParameter (int index, float newValue) { parameters[index]->setScaledValue(newValue); }
+    void setParameter (int index, float newValue) {
+        parameters[index]->setScaledValue(newValue);
+        rebuildEnabledChaosProviders();
+    }
 
     const String getParameterName (int index) { return parameters[index]->getName().c_str(); }
     const String getParameterText (int index) { return parameters[index]->getDisplayText().c_str(); }
@@ -71,11 +86,27 @@ public:
     void setStateInformation (const void* data, int sizeInBytes);
 
 private:
-    PluginParameterSet parameters;
+    void rebuildEnabledChaosProviders();
 
 private:
-    RandomChaosExecutor chaosExecutor;
-    
+    // Parameter dataset and associated caches
+    PluginParameterSet parameters;
+    unsigned long durationInSamples;
+    unsigned long cooldownInSamples;
+
+    OwnedArray<ChaosProvider> chaosProviders;
+    Array<ChaosProvider*> enabledChaosProviders;
+    ChaosProvider *currentChaosProvider;
+
+    typedef enum {
+        kStateSilence,
+        kStateAudioPlaying,
+        kStateCausingChaos,
+        kStateCooldown,
+    } PluginState;
+    PluginState pluginState;
+    unsigned long currentStateSample;
+
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChaosChimpAudioProcessor)
