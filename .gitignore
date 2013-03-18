@@ -18,6 +18,7 @@ Builds/VisualStudio2012/Release
 *.sdf
 *.opensdf
 *.suo
+project.xcworkspace
 cscope.out
 
 # Third-party libraries
