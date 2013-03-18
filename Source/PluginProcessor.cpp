@@ -21,17 +21,12 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor()
 {
     // First add parameters corresponding to the chaos providers so that the indexes match
     parameters.add(new BooleanParameter(kParamAudioDropoutsEnabled, true));
-    chaosProviders.add(new ChaosAudioDropouts());
     parameters.add(new BooleanParameter(kParamCpuHogEnabled, true));
-    chaosProviders.add(new ChaosCpuHog());
     parameters.add(new BooleanParameter(kParamCrasherEnabled, false));
-    chaosProviders.add(new ChaosCrasher());
     parameters.add(new BooleanParameter(kParamFeedbackEnabled, true));
-    chaosProviders.add(new ChaosFeedbackSimulator());
     parameters.add(new BooleanParameter(kParamMemoryLeakerEnabled, true));
-    chaosProviders.add(new ChaosMemoryLeaker());
 
-    parameters.add(new FloatParameter(kParamProbability, 0.0, 10.0, 0.0));
+    parameters.add(new FloatParameter(kParamProbability, 0.0, 10.0, 1.0));
     parameters.add(new FloatParameter(kParamDuration, 0.1, 20.0, 1.0));
     parameters.add(new FloatParameter(kParamCooldown, 0.1, 20.0, 1.0));
 }
@@ -45,15 +40,12 @@ ChaosChimpAudioProcessor::~ChaosChimpAudioProcessor()
 void ChaosChimpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     currentChaosProvider = nullptr;
-    durationInSamples = parameters[kParamDuration]->getValue() * sampleRate;
-    cooldownInSamples = parameters[kParamCooldown]->getValue() * sampleRate;
     currentStateSample = 0;
     rebuildEnabledChaosProviders();
 }
 
 void ChaosChimpAudioProcessor::releaseResources()
 {
-    chaosProviders.clear(true);
 }
 
 void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders()
@@ -61,8 +53,30 @@ void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders()
     enabledChaosProviders.clear();
     for (int providerIndex = 0; providerIndex < kNumChaosProviders; ++providerIndex) {
         if (parameters[providerIndex]->getValue()) {
-            enabledChaosProviders.add(chaosProviders[providerIndex]);
+            enabledChaosProviders.add(String(parameters[providerIndex]->getName().c_str()));
         }
+    }
+}
+
+ChaosProvider* getChaosProviderForName(const String& name)
+{
+    if(name.equalsIgnoreCase(kParamAudioDropoutsEnabled)) {
+        return new ChaosAudioDropouts();
+    }
+    else if(name.equalsIgnoreCase(kParamCpuHogEnabled)) {
+        return new ChaosCpuHog();
+    }
+    else if(name.equalsIgnoreCase(kParamCrasherEnabled)) {
+        return new ChaosCrasher();
+    }
+    else if(name.equalsIgnoreCase(kParamFeedbackEnabled)) {
+        return new ChaosFeedbackSimulator();
+    }
+    else if(name.equalsIgnoreCase(kParamMemoryLeakerEnabled)) {
+        return new ChaosMemoryLeaker();
+    }
+    else {
+        return nullptr;
     }
 }
 
@@ -93,10 +107,10 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             break;
         case kStateAudioPlaying: {
             double randomPercent = (double)random() / (double)RAND_MAX;
-            if (randomPercent < parameters[kParamProbability]->getValue()) {
+            if (randomPercent < parameters[kParamProbability]->getValue() / 100.0) {
                 if (enabledChaosProviders.size() > 0) {
                     int randomIndex = random() % enabledChaosProviders.size();
-                    currentChaosProvider = enabledChaosProviders[randomIndex];
+                    currentChaosProvider = getChaosProviderForName(enabledChaosProviders[randomIndex]);
                     currentStateSample = 0;
                     pluginState = kStateCausingChaos;
                     // Note that the chaos will actually start *next* block. Whatever.
@@ -106,8 +120,9 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
         }
         case kStateCausingChaos:
             currentStateSample += buffer.getNumSamples();
-            if (currentStateSample > durationInSamples) {
+            if (currentStateSample > parameters[kParamDuration]->getValue() * getSampleRate()) {
                 currentChaosProvider->reset();
+                delete currentChaosProvider;
                 currentChaosProvider = nullptr;
                 currentStateSample = 0;
                 pluginState = kStateCooldown;
@@ -115,7 +130,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             break;
         case kStateCooldown:
             currentStateSample += buffer.getNumSamples();
-            if (currentStateSample > cooldownInSamples) {
+            if (currentStateSample > parameters[kParamCooldown]->getValue() * getSampleRate()) {
                 currentStateSample = 0;
                 pluginState = kStateAudioPlaying;
             }

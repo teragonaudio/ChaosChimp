@@ -91,11 +91,8 @@ private:
 private:
     // Parameter dataset and associated caches
     PluginParameterSet parameters;
-    unsigned long durationInSamples;
-    unsigned long cooldownInSamples;
 
-    OwnedArray<ChaosProvider> chaosProviders;
-    Array<ChaosProvider*> enabledChaosProviders;
+    Array<String> enabledChaosProviders;
     ChaosProvider *currentChaosProvider;
 
     typedef enum {
