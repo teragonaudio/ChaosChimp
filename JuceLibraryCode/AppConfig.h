@@ -187,9 +187,6 @@
 #ifndef  JucePlugin_CFBundleIdentifier
  #define JucePlugin_CFBundleIdentifier     com.teragonaudio.ChaosChimp
 #endif
-#ifndef  JucePlugin_AUCocoaViewClassName
- #define JucePlugin_AUCocoaViewClassName   ChaosChimpAU_V1
-#endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
 #endif
