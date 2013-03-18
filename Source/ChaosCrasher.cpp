@@ -8,10 +8,12 @@
   ==============================================================================
 */
 
+#include <stdio.h>
 #include "ChaosCrasher.h"
 
 void ChaosCrasher::doChaos(float* channelData, int numSamples)
 {
-    // Yeah, this throws a compiler warning, but it's supposed to
-    int evil = 1 / 0;
+    int* evil = NULL;
+    evil = (int*)0xdeadbeef;
+    printf("Hmm %d\n", *evil);
 }
