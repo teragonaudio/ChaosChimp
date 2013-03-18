@@ -11,6 +11,7 @@
 #ifndef __CHAOSMEMORYLEAKER_H_AE8FCAB4__
 #define __CHAOSMEMORYLEAKER_H_AE8FCAB4__
 
+#include <vector>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ChaosProvider.h"
 
@@ -24,7 +25,7 @@ public:
     void reset();
 
 private:
-    Array<void*> junk;
+    std::vector<void*> junk;
 };
 
 #endif  // __CHAOSMEMORYLEAKER_H_AE8FCAB4__

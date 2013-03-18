@@ -12,9 +12,8 @@
 
 void ChaosMemoryLeaker::doChaos(float* channelData, int numSamples)
 {
-    // Allocate 1Mb of memory. At 512 buffersize, this is approximately 90Mb/sec
-    void* stuff = malloc(1024 * 1024);
-    junk.add(stuff);
+    void* stuff = malloc(1024 * 1024 * 10);
+    junk.push_back(stuff);
 }
 
 void ChaosMemoryLeaker::reset()
