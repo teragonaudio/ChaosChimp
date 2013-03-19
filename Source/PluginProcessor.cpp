@@ -45,6 +45,7 @@ void ChaosChimpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     currentChaosProvider = nullptr;
     currentStateSample = 0;
     rebuildEnabledChaosProviders();
+    pluginState = kStateSilence;
 }
 
 void ChaosChimpAudioProcessor::releaseResources()
@@ -96,8 +97,9 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
         }
     }
 
-    // Reset plugin state if necessary
-    if (inputIsSilent && pluginState != kStateSilence) {
+    // Reset plugin state if playing. Note that this plugin can cause the host itself to drop audio,
+    // so in kStateCausingChaos, we should ignore the silence.
+    if (inputIsSilent && pluginState == kStateAudioPlaying) {
         pluginState = kStateSilence;
     }
 
@@ -139,6 +141,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             }
             break;
         default:
+            pluginState = kStateSilence;
             break;
     }
 
