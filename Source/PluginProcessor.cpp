@@ -27,8 +27,11 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor()
     parameters.add(new BooleanParameter(kParamMemoryLeakerEnabled, true));
 
     parameters.add(new FloatParameter(kParamProbability, 0.0, 10.0, 1.0));
+    parameters[kParamProbability]->setUnit("%");
     parameters.add(new FloatParameter(kParamDuration, 0.1, 20.0, 1.0));
+    parameters[kParamDuration]->setUnit("sec");
     parameters.add(new FloatParameter(kParamCooldown, 0.1, 20.0, 1.0));
+    parameters[kParamCooldown]->setUnit("sec");
 }
 
 ChaosChimpAudioProcessor::~ChaosChimpAudioProcessor()
