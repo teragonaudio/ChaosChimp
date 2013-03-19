@@ -163,12 +163,12 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 //==============================================================================
 bool ChaosChimpAudioProcessor::hasEditor() const
 {
-    return true;
+    return false;
 }
 
 AudioProcessorEditor* ChaosChimpAudioProcessor::createEditor()
 {
-    return new ChaosChimpMainEditor(this);
+    return nullptr; //new ChaosChimpMainEditor(this);
 }
 
 //==============================================================================
