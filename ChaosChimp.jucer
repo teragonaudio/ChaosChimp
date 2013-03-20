@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="CYyx9I" name="ChaosChimp" projectType="audioplug" version="1.0.0"
+<JUCERPROJECT id="CYyx9I" name="ChaosChimp" projectType="audioplug" version="0.9.0"
               bundleIdentifier="com.teragonaudio.ChaosChimp" buildVST="1" buildAU="1"
               pluginName="ChaosChimp" pluginDesc="ChaosChimp" pluginManufacturer="Teragon Audio"
               pluginManufacturerCode="Tera" pluginCode="ChCp" pluginChannelConfigs="{1, 1}, {2, 2}"
