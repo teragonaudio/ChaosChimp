@@ -17,7 +17,7 @@ void ChaosCpuHog::doChaos(float* channelData, int numSamples)
     double junk = 0;
     for (int i = 0; i < numSamples * 1; ++i) {
         for (int j = 0; j < numSamples; ++j) {
-            junk += log10(exp(sin(sqrt(random() % (i * j + 1)))));
+            junk += log10(exp(sin(sqrtf(random() % (i * j + 1)))));
         }
     }
 }

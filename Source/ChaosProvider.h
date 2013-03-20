@@ -11,6 +11,10 @@
 #ifndef __CHAOSPROVIDER_H_7D39C974__
 #define __CHAOSPROVIDER_H_7D39C974__
 
+#if WIN32
+#define random rand
+#endif
+
 class ChaosProvider
 {
 public:
