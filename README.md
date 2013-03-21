@@ -34,7 +34,6 @@ ChaosChimp can currently simulate the following disasters:
 * Try to crash the host
 * Simulate feedback
 * Leak lots of memory
-* Cause excessive disk I/O stress
 
 The scenarios can be individually disabled, and the duration of the chaos and
 frequency which it occurs can be tweaked within the plugin. ChaosChimp will
