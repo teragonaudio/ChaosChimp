@@ -17,8 +17,7 @@
 #include "ChaosMemoryLeaker.h"
 
 //==============================================================================
-ChaosChimpAudioProcessor::ChaosChimpAudioProcessor()
-{
+ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() {
     // First add parameters corresponding to the chaos providers so that the indexes match
     parameters.add(new BooleanParameter(kParamAudioDropoutsEnabled, true));
     parameters.add(new BooleanParameter(kParamCpuHogEnabled, true));
@@ -34,36 +33,23 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor()
     parameters[kParamCooldown]->setUnit("sec");
 }
 
-ChaosChimpAudioProcessor::~ChaosChimpAudioProcessor()
-{
-}
-
-//==============================================================================
-
-void ChaosChimpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
-{
+void ChaosChimpAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     currentChaosProvider = nullptr;
     currentStateSample = 0;
     rebuildEnabledChaosProviders();
     pluginState = kStateSilence;
 }
 
-void ChaosChimpAudioProcessor::releaseResources()
-{
-}
-
-void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders()
-{
+void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders() {
     enabledChaosProviders.clear();
-    for (int providerIndex = 0; providerIndex < kNumChaosProviders; ++providerIndex) {
-        if (parameters[providerIndex]->getValue()) {
+    for(int providerIndex = 0; providerIndex < kNumChaosProviders; ++providerIndex) {
+        if(parameters[providerIndex]->getValue()) {
             enabledChaosProviders.add(String(parameters[providerIndex]->getName().c_str()));
         }
     }
 }
 
-ChaosProvider* getChaosProviderForName(const String& name)
-{
+ChaosProvider *getChaosProviderForName(const String &name) {
     if(name.equalsIgnoreCase(kParamAudioDropoutsEnabled)) {
         return new ChaosAudioDropouts();
     }
@@ -84,14 +70,13 @@ ChaosProvider* getChaosProviderForName(const String& name)
     }
 }
 
-void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
-{
+void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffer &midiMessages) {
     // If the input signal is silent, then don't do any evil things. This could, for instance,
     // cause the host to crash when the user is configuring the plugin.
     bool inputIsSilent = true;
-    float* channelData = buffer.getSampleData(0);
-    for (int i = 0; i < buffer.getNumSamples(); ++i) {
-        if (fabs(channelData[i]) >= kSilenceThreshhold) {
+    float *channelData = buffer.getSampleData(0);
+    for(int i = 0; i < buffer.getNumSamples(); ++i) {
+        if(fabs(channelData[i]) >= kSilenceThreshhold) {
             inputIsSilent = false;
             break;
         }
@@ -99,21 +84,21 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 
     // Reset plugin state if playing. Note that this plugin can cause the host itself to drop audio,
     // so in kStateCausingChaos, we should ignore the silence.
-    if (inputIsSilent && pluginState == kStateAudioPlaying) {
+    if(inputIsSilent && pluginState == kStateAudioPlaying) {
         pluginState = kStateSilence;
     }
 
     // Take action depending on the current state
-    switch (pluginState) {
+    switch(pluginState) {
         case kStateSilence:
-            if (!inputIsSilent) {
+            if(!inputIsSilent) {
                 pluginState = kStateAudioPlaying;
             }
             break;
         case kStateAudioPlaying: {
             double randomPercent = (double)random() / (double)RAND_MAX;
-            if (randomPercent < parameters[kParamProbability]->getValue() / 100.0) {
-                if (enabledChaosProviders.size() > 0) {
+            if(randomPercent < parameters[kParamProbability]->getValue() / 100.0) {
+                if(enabledChaosProviders.size() > 0) {
                     int randomIndex = random() % enabledChaosProviders.size();
                     currentChaosProvider = getChaosProviderForName(enabledChaosProviders[randomIndex]);
                     currentStateSample = 0;
@@ -125,7 +110,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
         }
         case kStateCausingChaos:
             currentStateSample += buffer.getNumSamples();
-            if (currentStateSample > parameters[kParamDuration]->getValue() * getSampleRate()) {
+            if(currentStateSample > parameters[kParamDuration]->getValue() * getSampleRate()) {
                 currentChaosProvider->reset();
                 delete currentChaosProvider;
                 currentChaosProvider = nullptr;
@@ -135,7 +120,7 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             break;
         case kStateCooldown:
             currentStateSample += buffer.getNumSamples();
-            if (currentStateSample > parameters[kParamCooldown]->getValue() * getSampleRate()) {
+            if(currentStateSample > parameters[kParamCooldown]->getValue() * getSampleRate()) {
                 currentStateSample = 0;
                 pluginState = kStateAudioPlaying;
             }
@@ -145,8 +130,8 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             break;
     }
 
-    if (pluginState == kStateCausingChaos && currentChaosProvider != nullptr) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+    if(pluginState == kStateCausingChaos && currentChaosProvider != nullptr) {
+        for(int channel = 0; channel < getNumInputChannels(); ++channel) {
             channelData = buffer.getSampleData(channel);
             currentChaosProvider->doChaos(channelData, buffer.getNumSamples());
         }
@@ -155,40 +140,53 @@ void ChaosChimpAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
-        buffer.clear (i, 0, buffer.getNumSamples());
+    for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
+        buffer.clear(i, 0, buffer.getNumSamples());
     }
 }
 
+float ChaosChimpAudioProcessor::getParameter(int index) {
+    return (float)parameters[index]->getScaledValue();
+}
+
+const String ChaosChimpAudioProcessor::getParameterName(int index) {
+    return parameters[index]->getName().c_str();
+}
+
+const String ChaosChimpAudioProcessor::getParameterText(int index) {
+    return parameters[index]->getDisplayText().c_str();
+}
+
+void ChaosChimpAudioProcessor::setParameter(int index, float newValue) {
+    parameters.setScaled(index, newValue);
+    rebuildEnabledChaosProviders();
+}
+
 //==============================================================================
-bool ChaosChimpAudioProcessor::hasEditor() const
-{
+bool ChaosChimpAudioProcessor::hasEditor() const {
     return false;
 }
 
-AudioProcessorEditor* ChaosChimpAudioProcessor::createEditor()
-{
+AudioProcessorEditor *ChaosChimpAudioProcessor::createEditor() {
     return nullptr; //new ChaosChimpMainEditor(this);
 }
 
 //==============================================================================
-void ChaosChimpAudioProcessor::getStateInformation (MemoryBlock& destData)
-{
+void ChaosChimpAudioProcessor::getStateInformation(MemoryBlock &destData) {
     XmlElement xml(getName());
-    for (int i = 0; i < getNumParameters(); i++) {
+    for(int i = 0; i < getNumParameters(); i++) {
         PluginParameter *parameter = parameters[i];
         xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
     }
 }
 
-void ChaosChimpAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
+void ChaosChimpAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
     ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    if (xmlState != 0 && xmlState->hasTagName(getName())) {
-        for (int i = 0; i < getNumParameters(); i++) {
+    if(xmlState != 0 && xmlState->hasTagName(getName())) {
+        for(int i = 0; i < getNumParameters(); i++) {
             PluginParameter *parameter = parameters[i];
-            if (xmlState->hasAttribute(parameter->getSafeName().c_str())) {
-                parameter->setValue(xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
+            if(xmlState->hasAttribute(parameter->getSafeName().c_str())) {
+                parameters.set(parameter, xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
             }
         }
     }
@@ -196,7 +194,6 @@ void ChaosChimpAudioProcessor::setStateInformation (const void* data, int sizeIn
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
+AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
     return new ChaosChimpAudioProcessor();
 }
