@@ -39,7 +39,7 @@ class ChaosChimpMainEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, const teragon::ResourceCache* r);
+    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache* r);
     ~ChaosChimpMainEditor();
 
     //==============================================================================
@@ -49,13 +49,31 @@ public:
     void paint (Graphics& g);
     void resized();
 
+    // Binary resources:
+    static const char* background_png;
+    static const int background_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    teragon::ThreadsafePluginParameterSet &parameters;
+    teragon::ResourceCache *resources;
     //[/UserVariables]
 
     //==============================================================================
+    ScopedPointer<teragon::PushButton> dropoutsButton;
+    ScopedPointer<teragon::PushButton> cpuHogButton;
+    ScopedPointer<teragon::PushButton> crashButton;
+    ScopedPointer<teragon::PushButton> feedbackButton;
+    ScopedPointer<teragon::PushButton> eatMemoryButton;
+    ScopedPointer<teragon::IndicatorLight> chaosActiveLight;
+    ScopedPointer<teragon::ToggleButton> panicButton;
+    ScopedPointer<teragon::ImageKnobSmall> probabilityKnob;
+    ScopedPointer<teragon::ImageKnobSmall> durationKnob;
+    ScopedPointer<teragon::ImageKnobSmall> cooldownKnob;
+    ScopedPointer<teragon::StatusBar> statusBar;
+    ScopedPointer<teragon::ParameterLabel> versionLabel;
+    Image cachedImage_background_png;
 
 
     //==============================================================================
