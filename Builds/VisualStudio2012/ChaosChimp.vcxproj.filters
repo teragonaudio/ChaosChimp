@@ -5,6 +5,27 @@
     <Filter Include="ChaosChimp">
       <UniqueIdentifier>{E219C48C-975D-7075-DAB6-20A3763922AC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ChaosChimp\Components">
+      <UniqueIdentifier>{E7C5DDC6-11B3-5C1B-28A7-D576E3D55E0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\PluginParameters">
+      <UniqueIdentifier>{4D773564-0E71-3B56-4A53-E9E35738DCB0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\PluginParameters\include">
+      <UniqueIdentifier>{4C984FA0-4CED-012F-B03A-087F4DF4DD12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\PluginParameters\include\readerwriterqueue">
+      <UniqueIdentifier>{C939B6BA-48CC-5855-E3F6-680578D776D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\PluginParameters\include\tinythread">
+      <UniqueIdentifier>{1DAF3D93-5E34-0762-EF64-DABD91DF3CD9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\PluginParameters\include\tinythread\source">
+      <UniqueIdentifier>{1A3D60D5-DE36-0A34-79EF-0ABC6F58536F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChaosChimp\Components\Source">
+      <UniqueIdentifier>{314841A5-9B2B-B1E6-87E3-03559002BDD5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ChaosChimp\Source">
       <UniqueIdentifier>{D0CEB9BD-9F96-5609-7090-747E32548586}</UniqueIdentifier>
     </Filter>
@@ -101,8 +122,8 @@
     <Filter Include="Juce Modules\juce_core\xml">
       <UniqueIdentifier>{F2B2F310-F30F-7166-42A9-9BF9C230DA78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Juce Modules\juce_core\json">
-      <UniqueIdentifier>{5B662103-FB59-7229-1076-6A6665724ED0}</UniqueIdentifier>
+    <Filter Include="Juce Modules\juce_core\javascript">
+      <UniqueIdentifier>{1B67A7C0-86E0-53F6-6AE3-7AD93B8DC95B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Juce Modules\juce_core\zip">
       <UniqueIdentifier>{F03654BC-34D8-F975-BEA3-750CC2783D23}</UniqueIdentifier>
@@ -242,9 +263,6 @@
     <Filter Include="Juce Modules\juce_gui_extra\embedding">
       <UniqueIdentifier>{61B2920C-494D-D8CB-C0C7-5DBF3D76D164}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Juce Modules\juce_gui_extra\lookandfeel">
-      <UniqueIdentifier>{4980B18D-FEDE-B773-F254-E3B5207D81F0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Juce Modules\juce_gui_extra\misc">
       <UniqueIdentifier>{66C9B809-8739-A217-C78D-A15D6089B8E3}</UniqueIdentifier>
     </Filter>
@@ -256,6 +274,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\tinythread.cpp">
+      <Filter>ChaosChimp\Components\PluginParameters\include\tinythread\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\StatusBar.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.cpp">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ChaosAudioDropouts.cpp">
       <Filter>ChaosChimp\Source</Filter>
     </ClCompile>
@@ -367,6 +412,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_AudioUnitPluginFormat.mm">
       <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.cpp">
+      <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTPluginFormat.cpp">
       <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
     </ClCompile>
@@ -475,6 +523,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\files\juce_TemporaryFile.cpp">
       <Filter>Juce Modules\juce_core\files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\network\juce_IPAddress.cpp">
+      <Filter>Juce Modules\juce_core\network</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\network\juce_MACAddress.cpp">
       <Filter>Juce Modules\juce_core\network</Filter>
     </ClCompile>
@@ -523,8 +574,11 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\xml\juce_XmlElement.cpp">
       <Filter>Juce Modules\juce_core\xml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\json\juce_JSON.cpp">
-      <Filter>Juce Modules\juce_core\json</Filter>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_Javascript.cpp">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_JSON.cpp">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\zip\juce_GZIPCompressorOutputStream.cpp">
       <Filter>Juce Modules\juce_core\zip</Filter>
@@ -557,6 +611,9 @@
       <Filter>Juce Modules\juce_core\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_android_Threads.cpp">
+      <Filter>Juce Modules\juce_core\native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_linux_CommonFile.cpp">
       <Filter>Juce Modules\juce_core\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_linux_Files.cpp">
@@ -724,12 +781,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\geometry\juce_PathStrokeType.cpp">
       <Filter>Juce Modules\juce_graphics\geometry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\geometry\juce_RectangleList.cpp">
-      <Filter>Juce Modules\juce_graphics\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\placement\juce_Justification.cpp">
-      <Filter>Juce Modules\juce_graphics\placement</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\placement\juce_RectanglePlacement.cpp">
       <Filter>Juce Modules\juce_graphics\placement</Filter>
     </ClCompile>
@@ -761,6 +812,9 @@
       <Filter>Juce Modules\juce_graphics\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\native\juce_android_GraphicsContext.cpp">
+      <Filter>Juce Modules\juce_graphics\native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\native\juce_freetype_Fonts.cpp">
       <Filter>Juce Modules\juce_graphics\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_graphics\native\juce_linux_Fonts.cpp">
@@ -806,6 +860,9 @@
       <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseEvent.cpp">
+      <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseInactivityDetector.cpp">
       <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseInputSource.cpp">
@@ -1051,6 +1108,15 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel.cpp">
       <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V1.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V2.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V3.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\filebrowser\juce_DirectoryContentsDisplayComponent.cpp">
       <Filter>Juce Modules\juce_gui_basics\filebrowser</Filter>
     </ClCompile>
@@ -1165,9 +1231,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\documents\juce_FileBasedDocument.cpp">
       <Filter>Juce Modules\juce_gui_extra\documents</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\lookandfeel\juce_OldSchoolLookAndFeel.cpp">
-      <Filter>Juce Modules\juce_gui_extra\lookandfeel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\misc\juce_BubbleMessageComponent.cpp">
       <Filter>Juce Modules\juce_gui_extra\misc</Filter>
     </ClCompile>
@@ -1205,6 +1268,9 @@
       <Filter>Juce Modules\juce_gui_extra\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\native\juce_mac_NSViewComponent.mm">
+      <Filter>Juce Modules\juce_gui_extra\native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\native\juce_mac_SystemTrayIcon.cpp">
       <Filter>Juce Modules\juce_gui_extra\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\native\juce_mac_WebBrowserComponent.mm">
@@ -1269,6 +1335,105 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\readerwriterqueue\atomicops.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include\readerwriterqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\readerwriterqueue\readerwriterqueue.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include\readerwriterqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\fast_mutex.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include\tinythread\source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\tinythread.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include\tinythread\source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\BooleanParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\DecibelParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\Event.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\EventDispatcher.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\FloatParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\FrequencyParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\IntegerParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameters.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameterSet.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\StringParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\ThreadsafePluginParameterSet.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\VoidParameter.h">
+      <Filter>ChaosChimp\Components\PluginParameters\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\AnimationConstants.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\EllipsizedLabel.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnobLarge.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnobSmall.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ParameterLabel.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PluginParameterComponent.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\StatusBar.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\TeragonGuiComponents.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ToggleButton.h">
+      <Filter>ChaosChimp\Components\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ChaosAudioDropouts.h">
       <Filter>ChaosChimp\Source</Filter>
     </ClInclude>
@@ -1419,9 +1584,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_AudioUnitPluginFormat.h">
       <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_DirectXPluginFormat.h">
-      <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.h">
       <Filter>Juce Modules\juce_audio_processors\format_types</Filter>
     </ClInclude>
@@ -1479,6 +1641,9 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_StringPool.h">
       <Filter>Juce Modules\juce_core\text</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_StringRef.h">
+      <Filter>Juce Modules\juce_core\text</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_TextDiff.h">
       <Filter>Juce Modules\juce_core\text</Filter>
     </ClInclude>
@@ -1501,6 +1666,9 @@
       <Filter>Juce Modules\juce_core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\memory\juce_ByteOrder.h">
+      <Filter>Juce Modules\juce_core\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\memory\juce_ContainerDeletePolicy.h">
       <Filter>Juce Modules\juce_core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\memory\juce_HeapBlock.h">
@@ -1653,6 +1821,9 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\files\juce_TemporaryFile.h">
       <Filter>Juce Modules\juce_core\files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\network\juce_IPAddress.h">
+      <Filter>Juce Modules\juce_core\network</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\network\juce_MACAddress.h">
       <Filter>Juce Modules\juce_core\network</Filter>
     </ClInclude>
@@ -1713,8 +1884,11 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\xml\juce_XmlElement.h">
       <Filter>Juce Modules\juce_core\xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\json\juce_JSON.h">
-      <Filter>Juce Modules\juce_core\json</Filter>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_Javascript.h">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_JSON.h">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\zip\juce_GZIPCompressorOutputStream.h">
       <Filter>Juce Modules\juce_core\zip</Filter>
@@ -1783,6 +1957,9 @@
       <Filter>Juce Modules\juce_events\messages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_events\messages\juce_DeletedAtShutdown.h">
+      <Filter>Juce Modules\juce_events\messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_events\messages\juce_Initialisation.h">
       <Filter>Juce Modules\juce_events\messages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_events\messages\juce_Message.h">
@@ -1989,6 +2166,9 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseEvent.h">
       <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseInactivityDetector.h">
+      <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_MouseInputSource.h">
       <Filter>Juce Modules\juce_gui_basics\mouse</Filter>
     </ClInclude>
@@ -2108,6 +2288,12 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\menus\juce_PopupMenu.h">
       <Filter>Juce Modules\juce_gui_basics\menus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_AnimatedPosition.h">
+      <Filter>Juce Modules\juce_gui_basics\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_AnimatedPositionBehaviours.h">
+      <Filter>Juce Modules\juce_gui_basics\layout</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ComponentAnimator.h">
       <Filter>Juce Modules\juce_gui_basics\layout</Filter>
@@ -2253,6 +2439,15 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel.h">
       <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V1.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V2.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V3.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\filebrowser\juce_DirectoryContentsDisplayComponent.h">
       <Filter>Juce Modules\juce_gui_basics\filebrowser</Filter>
     </ClInclude>
@@ -2319,9 +2514,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\application\juce_Application.h">
       <Filter>Juce Modules\juce_gui_basics\application</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\application\juce_Initialisation.h">
-      <Filter>Juce Modules\juce_gui_basics\application</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_MultiTouchMapper.h">
       <Filter>Juce Modules\juce_gui_basics\native</Filter>
     </ClInclude>
@@ -2354,9 +2546,6 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\embedding\juce_UIViewComponent.h">
       <Filter>Juce Modules\juce_gui_extra\embedding</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\lookandfeel\juce_OldSchoolLookAndFeel.h">
-      <Filter>Juce Modules\juce_gui_extra\lookandfeel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\misc\juce_AppleRemote.h">
       <Filter>Juce Modules\juce_gui_extra\misc</Filter>

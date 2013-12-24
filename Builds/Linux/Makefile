@@ -1,28 +1,29 @@
 # Automatically generated makefile, created by the Introjucer
 # Don't edit this file! Your changes will be overwritten when you re-save the Introjucer project!
 
+# (this disables dependency generation if multiple architectures are set)
+DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
+
 ifndef CONFIG
   CONFIG=Debug
 endif
-
-ifeq ($(TARGET_ARCH),)
-  TARGET_ARCH := -march=native
-endif
-
-# (this disables dependency generation if multiple architectures are set)
-DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 ifeq ($(CONFIG),Debug)
   BINDIR := build
   LIBDIR := build
   OBJDIR := build/intermediate/Debug
   OUTDIR := build
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode
+
+  ifeq ($(TARGET_ARCH),)
+    TARGET_ARCH := -march=native
+  endif
+
+  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "ENABLE_MULTITHREADED=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
-  CXXFLAGS += $(CFLAGS) -I../../Third-Party/PluginParameters/include
-  LDFLAGS += -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -ldl -lfreetype -lpthread -lrt 
+  CXXFLAGS += $(CFLAGS)
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -ldl -lfreetype -lpthread -lrt 
   LDDEPS :=
-  RESFLAGS :=  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode
+  RESFLAGS :=  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "ENABLE_MULTITHREADED=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := ChaosChimp.so
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif
@@ -32,17 +33,31 @@ ifeq ($(CONFIG),Release)
   LIBDIR := build
   OBJDIR := build/intermediate/Release
   OUTDIR := build
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode
+
+  ifeq ($(TARGET_ARCH),)
+    TARGET_ARCH := -march=native
+  endif
+
+  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "ENABLE_MULTITHREADED=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
-  CXXFLAGS += $(CFLAGS) -I../../Third-Party/PluginParameters/include
-  LDFLAGS += -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -ldl -lfreetype -lpthread -lrt 
+  CXXFLAGS += $(CFLAGS)
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -ldl -lfreetype -lpthread -lrt 
   LDDEPS :=
-  RESFLAGS :=  -D "LINUX=1" -D "NDEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode
+  RESFLAGS :=  -D "LINUX=1" -D "NDEBUG=1" -D "JucePlugin_TailLengthSeconds=0" -D "ENABLE_MULTITHREADED=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../Third-Party/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := ChaosChimp.so
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/tinythread_51467623.o \
+  $(OBJDIR)/ImageKnob_234e9ab6.o \
+  $(OBJDIR)/ImageSlider_5ceaa0e1.o \
+  $(OBJDIR)/IndicatorLight_81b8276c.o \
+  $(OBJDIR)/PushButton_85a25391.o \
+  $(OBJDIR)/ResourceCache_4d3196d9.o \
+  $(OBJDIR)/Resources_244c186a.o \
+  $(OBJDIR)/StatusBar_62e48306.o \
+  $(OBJDIR)/ThinButton_20dde050.o \
   $(OBJDIR)/ChaosAudioDropouts_5e69c933.o \
   $(OBJDIR)/ChaosCpuHog_22c0cb79.o \
   $(OBJDIR)/ChaosCrasher_8956097d.o \
@@ -79,6 +94,51 @@ clean:
 strip:
 	@echo Stripping ChaosChimp
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/tinythread_51467623.o: ../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling tinythread.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ImageKnob_234e9ab6.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ImageKnob.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ImageSlider_5ceaa0e1.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ImageSlider.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/IndicatorLight_81b8276c.o: ../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling IndicatorLight.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/PushButton_85a25391.o: ../../Third-Party/TeragonGuiComponents/Components/Source/PushButton.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PushButton.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ResourceCache_4d3196d9.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ResourceCache.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Resources_244c186a.o: ../../Third-Party/TeragonGuiComponents/Components/Source/Resources.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Resources.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/StatusBar_62e48306.o: ../../Third-Party/TeragonGuiComponents/Components/Source/StatusBar.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling StatusBar.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ThinButton_20dde050.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ThinButton.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ChaosAudioDropouts_5e69c933.o: ../../Source/ChaosAudioDropouts.cpp
 	-@mkdir -p $(OBJDIR)
