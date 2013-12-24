@@ -24,16 +24,19 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() {
     parameters.add(new BooleanParameter(kParamFeedbackEnabled, true));
     parameters.add(new BooleanParameter(kParamMemoryLeakerEnabled, true));
 
+    parameters.add(new BooleanParameter(kParamChaosActive, false));
+    parameters.add(new VoidParameter(kParamPanic));
+
     parameters.add(new FloatParameter(kParamProbability, 0.0, 10.0, 1.0));
     parameters[kParamProbability]->setUnit("%");
     parameters.add(new FloatParameter(kParamDuration, 0.1, 20.0, 1.0));
-    parameters[kParamDuration]->setUnit("sec");
+    parameters[kParamDuration]->setUnit("Sec");
     parameters.add(new FloatParameter(kParamCooldown, 0.1, 20.0, 1.0));
-    parameters[kParamCooldown]->setUnit("sec");
+    parameters[kParamCooldown]->setUnit("Sec");
 
     ParameterString version = ProjectInfo::projectName;
     version.append(" version ").append(ProjectInfo::versionString);
-    parameters.add(new StringParameter(version));
+    parameters.add(new StringParameter(kParamVersion, version));
 }
 
 void ChaosChimpAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {

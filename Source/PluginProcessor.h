@@ -23,13 +23,17 @@ static const char *kParamAudioDropoutsEnabled = "Audio Dropouts Enabled";
 static const char *kParamCpuHogEnabled = "CPU Hog Enabled";
 static const char *kParamCrasherEnabled = "Crasher Enabled";
 static const char *kParamFeedbackEnabled = "Feedback Enabled";
-static const char *kParamMemoryLeakerEnabled = "Memory Leaker Enabled";
+static const char *kParamMemoryLeakerEnabled = "Memory Eater Enabled";
 // Must be updated if another chaos provider is added
 static const int kNumChaosProviders = 5;
 
+static const char *kParamChaosActive = "Chaos Active";
+static const char *kParamPanic = "Panic";
 static const char *kParamProbability = "Probability";
 static const char *kParamDuration = "Chaos Duration";
 static const char *kParamCooldown = "Cooldown Period";
+
+static const char *kParamVersion = "Version";
 
 // Prevent causing chaos during silence
 static const float kSilenceThreshhold = 0.1f;
