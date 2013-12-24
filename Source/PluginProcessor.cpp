@@ -158,8 +158,10 @@ void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
 }
 
 void ChaosChimpAudioProcessor::stopCausingChaos() {
-    currentChaosProvider->reset();
-    delete currentChaosProvider;
+    if(currentChaosProvider != nullptr) {
+        currentChaosProvider->reset();
+        delete currentChaosProvider;
+    }
     currentChaosProvider = nullptr;
     currentStateSample = 0;
     pluginState = kStateCooldown;
