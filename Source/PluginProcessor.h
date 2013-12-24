@@ -12,8 +12,10 @@
 #define __PLUGINPROCESSOR_H_270A7CC2__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "PluginEditor.h"
 #include "PluginParameters.h"
 #include "ChaosProvider.h"
+#include "Resources.h"
 
 using namespace teragon;
 
@@ -43,7 +45,7 @@ public:
     void processBlock(AudioSampleBuffer &buffer, MidiBuffer &midiMessages);
 
     // Editor
-    AudioProcessorEditor *createEditor();
+    AudioProcessorEditor *createEditor() { return new ChaosChimpMainEditor(this, parameters, Resources::getCache()); }
     bool hasEditor() const { return true; }
 
     // Plugin information and settings

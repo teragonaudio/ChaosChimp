@@ -1,25 +1,24 @@
 /*
   ==============================================================================
 
-  This is an automatically generated file created by the Jucer!
-
-  Creation date:  5 Mar 2013 11:28:35pm
+  This is an automatically generated GUI class created by the Introjucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Jucer version: 1.12
+  Created with Introjucer version: 3.1.0
 
   ------------------------------------------------------------------------------
 
-  The Jucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-6 by Raw Material Software ltd.
+  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  Copyright 2004-13 by Raw Material Software Ltd.
 
   ==============================================================================
 */
 
 //[Headers] You can add your own extra header files here...
+#include "TeragonGuiComponents.h"
 //[/Headers]
 
 #include "PluginEditor.h"
@@ -29,7 +28,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-ChaosChimpMainEditor::ChaosChimpMainEditor (ChaosChimpAudioProcessor* ownerFilter)
+ChaosChimpMainEditor::ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, const teragon::ResourceCache* r)
     : AudioProcessorEditor(ownerFilter)
 {
 
@@ -80,16 +79,17 @@ void ChaosChimpMainEditor::resized()
 
 //==============================================================================
 #if 0
-/*  -- Jucer information section --
+/*  -- Introjucer information section --
 
-    This is where the Jucer puts all of its metadata, so don't change anything in here!
+    This is where the Introjucer stores the metadata that describe this GUI layout, so
+    make changes in here at your peril!
 
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ChaosChimpMainEditor" componentName=""
-                 parentClasses="public AudioProcessorEditor" constructorParams="ChaosChimpAudioProcessor* ownerFilter"
+                 parentClasses="public AudioProcessorEditor" constructorParams="AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &amp;p, const teragon::ResourceCache* r"
                  variableInitialisers="AudioProcessorEditor(ownerFilter)" snapPixels="8"
-                 snapActive="1" snapShown="1" overlayOpacity="0.330000013" fixedSize="1"
+                 snapActive="1" snapShown="1" overlayOpacity="0.330" fixedSize="1"
                  initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ffffffff"/>
 </JUCER_COMPONENT>
@@ -97,7 +97,6 @@ BEGIN_JUCER_METADATA
 END_JUCER_METADATA
 */
 #endif
-
 
 
 //[EndFile] You can add extra defines here...

@@ -9,7 +9,6 @@
 */
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
 #include "ChaosAudioDropouts.h"
 #include "ChaosCpuHog.h"
 #include "ChaosCrasher.h"
@@ -31,6 +30,10 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() {
     parameters[kParamDuration]->setUnit("sec");
     parameters.add(new FloatParameter(kParamCooldown, 0.1, 20.0, 1.0));
     parameters[kParamCooldown]->setUnit("sec");
+
+    ParameterString version = ProjectInfo::projectName;
+    version.append(" version ").append(ProjectInfo::versionString);
+    parameters.add(new StringParameter(version));
 }
 
 void ChaosChimpAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
@@ -162,16 +165,6 @@ void ChaosChimpAudioProcessor::setParameter(int index, float newValue) {
     rebuildEnabledChaosProviders();
 }
 
-//==============================================================================
-bool ChaosChimpAudioProcessor::hasEditor() const {
-    return false;
-}
-
-AudioProcessorEditor *ChaosChimpAudioProcessor::createEditor() {
-    return nullptr; //new ChaosChimpMainEditor(this);
-}
-
-//==============================================================================
 void ChaosChimpAudioProcessor::getStateInformation(MemoryBlock &destData) {
     XmlElement xml(getName());
     for(int i = 0; i < getNumParameters(); i++) {
@@ -192,8 +185,6 @@ void ChaosChimpAudioProcessor::setStateInformation(const void *data, int sizeInB
     }
 }
 
-//==============================================================================
-// This creates new instances of the plugin..
 AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
     return new ChaosChimpAudioProcessor();
 }

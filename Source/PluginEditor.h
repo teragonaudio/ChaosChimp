@@ -1,30 +1,28 @@
 /*
   ==============================================================================
 
-  This is an automatically generated file created by the Jucer!
-
-  Creation date:  5 Mar 2013 11:28:35pm
+  This is an automatically generated GUI class created by the Introjucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Jucer version: 1.12
+  Created with Introjucer version: 3.1.0
 
   ------------------------------------------------------------------------------
 
-  The Jucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-6 by Raw Material Software ltd.
+  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  Copyright 2004-13 by Raw Material Software Ltd.
 
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
-#define __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
+#ifndef __JUCE_HEADER_761AEE8ADC62D991__
+#define __JUCE_HEADER_761AEE8ADC62D991__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "PluginProcessor.h"
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "TeragonGuiComponents.h"
 //[/Headers]
 
 
@@ -41,7 +39,7 @@ class ChaosChimpMainEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    ChaosChimpMainEditor (ChaosChimpAudioProcessor* ownerFilter);
+    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, const teragon::ResourceCache* r);
     ~ChaosChimpMainEditor();
 
     //==============================================================================
@@ -67,4 +65,4 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
+#endif   // __JUCE_HEADER_761AEE8ADC62D991__
