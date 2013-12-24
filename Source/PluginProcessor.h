@@ -38,7 +38,7 @@ static const char *kParamVersion = "Version";
 // Prevent causing chaos during silence
 static const float kSilenceThreshhold = 0.1f;
 
-class ChaosChimpAudioProcessor : public AudioProcessor {
+class ChaosChimpAudioProcessor : public AudioProcessor, public PluginParameterObserver {
 public:
     ChaosChimpAudioProcessor();
     ~ChaosChimpAudioProcessor() {}
@@ -81,8 +81,13 @@ public:
     void getStateInformation(MemoryBlock &destData);
     void setStateInformation(const void *data, int sizeInBytes);
 
+    // PluginParameterObserver methods
+    bool isRealtimePriority() const { return true; }
+    void onParameterUpdated(const PluginParameter *parameter);
+
 private:
     void rebuildEnabledChaosProviders();
+    void stopCausingChaos(); // greatest method name, or greatest method name EVER?
 
 private:
     // Parameter dataset and associated caches

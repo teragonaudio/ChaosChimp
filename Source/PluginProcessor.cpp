@@ -16,17 +16,23 @@
 #include "ChaosMemoryLeaker.h"
 
 //==============================================================================
-ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() {
+ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() :
+AudioProcessor(),
+PluginParameterObserver() {
     // First add parameters corresponding to the chaos providers so that the indexes match
     parameters.add(new BooleanParameter(kParamAudioDropoutsEnabled, true));
     parameters.add(new BooleanParameter(kParamCpuHogEnabled, true));
     parameters.add(new BooleanParameter(kParamCrasherEnabled, false));
     parameters.add(new BooleanParameter(kParamFeedbackEnabled, true));
     parameters.add(new BooleanParameter(kParamMemoryLeakerEnabled, true));
-
-    parameters.add(new BooleanParameter(kParamChaosActive, false));
     parameters.add(new VoidParameter(kParamPanic));
 
+    // Subscribe to all the above parameters
+    for(size_t i = 0; i < parameters.size(); ++i) {
+        parameters[i]->addObserver(this);
+    }
+
+    parameters.add(new BooleanParameter(kParamChaosActive, false));
     parameters.add(new FloatParameter(kParamProbability, 0.0, 10.0, 1.0));
     parameters[kParamProbability]->setUnit("%");
     parameters.add(new FloatParameter(kParamDuration, 0.1, 20.0, 1.0));
@@ -77,6 +83,8 @@ ChaosProvider *getChaosProviderForName(const String &name) {
 }
 
 void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffer &midiMessages) {
+    parameters.processRealtimeEvents();
+
     // If the input signal is silent, then don't do any evil things. This could, for instance,
     // cause the host to crash when the user is configuring the plugin.
     bool inputIsSilent = true;
@@ -108,23 +116,21 @@ void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
                     int randomIndex = random() % enabledChaosProviders.size();
                     currentChaosProvider = getChaosProviderForName(enabledChaosProviders[randomIndex]);
                     currentStateSample = 0;
-                    pluginState = kStateCausingChaos;
                     // Note that the chaos will actually start *next* block. Whatever.
+                    pluginState = kStateCausingChaos;
                 }
             }
             break;
         }
         case kStateCausingChaos:
+            parameters.set(kParamChaosActive, true);
             currentStateSample += buffer.getNumSamples();
             if(currentStateSample > parameters[kParamDuration]->getValue() * getSampleRate()) {
-                currentChaosProvider->reset();
-                delete currentChaosProvider;
-                currentChaosProvider = nullptr;
-                currentStateSample = 0;
-                pluginState = kStateCooldown;
+                stopCausingChaos();
             }
             break;
         case kStateCooldown:
+            parameters.set(kParamChaosActive, false);
             currentStateSample += buffer.getNumSamples();
             if(currentStateSample > parameters[kParamCooldown]->getValue() * getSampleRate()) {
                 currentStateSample = 0;
@@ -151,6 +157,14 @@ void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
     }
 }
 
+void ChaosChimpAudioProcessor::stopCausingChaos() {
+    currentChaosProvider->reset();
+    delete currentChaosProvider;
+    currentChaosProvider = nullptr;
+    currentStateSample = 0;
+    pluginState = kStateCooldown;
+}
+
 float ChaosChimpAudioProcessor::getParameter(int index) {
     return (float)parameters[index]->getScaledValue();
 }
@@ -165,7 +179,15 @@ const String ChaosChimpAudioProcessor::getParameterText(int index) {
 
 void ChaosChimpAudioProcessor::setParameter(int index, float newValue) {
     parameters.setScaled(index, newValue);
-    rebuildEnabledChaosProviders();
+}
+
+void ChaosChimpAudioProcessor::onParameterUpdated(const PluginParameter *parameter) {
+    if(parameter->getName() == kParamPanic) {
+        stopCausingChaos();
+    }
+    else {
+        rebuildEnabledChaosProviders();
+    }
 }
 
 void ChaosChimpAudioProcessor::getStateInformation(MemoryBlock &destData) {
