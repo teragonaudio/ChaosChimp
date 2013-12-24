@@ -98,6 +98,8 @@ ChaosChimpMainEditor::ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon
 
     //[Constructor] You can add your own custom stuff here..
     statusBar->subscribeToParameters();
+    statusBar->ignoreParameter("Chaos Active");
+
     versionLabel->setFont(teragon::StatusBar::getFont());
     versionLabel->setJustificationType(Justification::centredRight);
     //[/Constructor]
