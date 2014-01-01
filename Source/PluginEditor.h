@@ -39,7 +39,7 @@ class ChaosChimpMainEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache* r);
+    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ConcurrentParameterSet &p, teragon::ResourceCache* r);
     ~ChaosChimpMainEditor();
 
     //==============================================================================
@@ -56,7 +56,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    teragon::ThreadsafePluginParameterSet &parameters;
+    teragon::ConcurrentParameterSet &parameters;
     teragon::ResourceCache *resources;
     //[/UserVariables]
 

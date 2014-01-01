@@ -15,10 +15,7 @@
 #include "ChaosFeedbackSimulator.h"
 #include "ChaosMemoryLeaker.h"
 
-//==============================================================================
-ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() :
-AudioProcessor(),
-PluginParameterObserver() {
+ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() : TeragonPluginBase(), ParameterObserver() {
     // First add parameters corresponding to the chaos providers so that the indexes match
     parameters.add(new BooleanParameter(kParamAudioDropoutsEnabled, true));
     parameters.add(new BooleanParameter(kParamCpuHogEnabled, true));
@@ -46,10 +43,11 @@ PluginParameterObserver() {
 }
 
 void ChaosChimpAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+    TeragonPluginBase::prepareToPlay(sampleRate, samplesPerBlock);
     currentChaosProvider = nullptr;
     currentStateSample = 0;
-    rebuildEnabledChaosProviders();
     pluginState = kStateSilence;
+    rebuildEnabledChaosProviders();
 }
 
 void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders() {
@@ -61,29 +59,8 @@ void ChaosChimpAudioProcessor::rebuildEnabledChaosProviders() {
     }
 }
 
-ChaosProvider *getChaosProviderForName(const String &name) {
-    if(name.equalsIgnoreCase(kParamAudioDropoutsEnabled)) {
-        return new ChaosAudioDropouts();
-    }
-    else if(name.equalsIgnoreCase(kParamCpuHogEnabled)) {
-        return new ChaosCpuHog();
-    }
-    else if(name.equalsIgnoreCase(kParamCrasherEnabled)) {
-        return new ChaosCrasher();
-    }
-    else if(name.equalsIgnoreCase(kParamFeedbackEnabled)) {
-        return new ChaosFeedbackSimulator();
-    }
-    else if(name.equalsIgnoreCase(kParamMemoryLeakerEnabled)) {
-        return new ChaosMemoryLeaker();
-    }
-    else {
-        return nullptr;
-    }
-}
-
 void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffer &midiMessages) {
-    parameters.processRealtimeEvents();
+    TeragonPluginBase::processBlock(buffer, midiMessages);
 
     // If the input signal is silent, then don't do any evil things. This could, for instance,
     // cause the host to crash when the user is configuring the plugin.
@@ -148,13 +125,31 @@ void ChaosChimpAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
             currentChaosProvider->doChaos(channelData, buffer.getNumSamples());
         }
     }
+}
 
-    // In case we have more outputs than inputs, we'll clear any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
-        buffer.clear(i, 0, buffer.getNumSamples());
+ChaosProvider *ChaosChimpAudioProcessor::getChaosProviderForName(const String &name) {
+    if(name.equalsIgnoreCase(kParamAudioDropoutsEnabled)) {
+        return new ChaosAudioDropouts();
     }
+    else if(name.equalsIgnoreCase(kParamCpuHogEnabled)) {
+        return new ChaosCpuHog();
+    }
+    else if(name.equalsIgnoreCase(kParamCrasherEnabled)) {
+        return new ChaosCrasher();
+    }
+    else if(name.equalsIgnoreCase(kParamFeedbackEnabled)) {
+        return new ChaosFeedbackSimulator();
+    }
+    else if(name.equalsIgnoreCase(kParamMemoryLeakerEnabled)) {
+        return new ChaosMemoryLeaker();
+    }
+    else {
+        return nullptr;
+    }
+}
+
+void ChaosChimpAudioProcessor::releaseResources() {
+    TeragonPluginBase::releaseResources();
 }
 
 void ChaosChimpAudioProcessor::stopCausingChaos() {
@@ -167,23 +162,7 @@ void ChaosChimpAudioProcessor::stopCausingChaos() {
     pluginState = kStateCooldown;
 }
 
-float ChaosChimpAudioProcessor::getParameter(int index) {
-    return (float)parameters[index]->getScaledValue();
-}
-
-const String ChaosChimpAudioProcessor::getParameterName(int index) {
-    return parameters[index]->getName().c_str();
-}
-
-const String ChaosChimpAudioProcessor::getParameterText(int index) {
-    return parameters[index]->getDisplayText().c_str();
-}
-
-void ChaosChimpAudioProcessor::setParameter(int index, float newValue) {
-    parameters.setScaled(index, newValue);
-}
-
-void ChaosChimpAudioProcessor::onParameterUpdated(const PluginParameter *parameter) {
+void ChaosChimpAudioProcessor::onParameterUpdated(const Parameter *parameter) {
     if(parameter->getName() == kParamPanic) {
         stopCausingChaos();
     }
@@ -192,24 +171,8 @@ void ChaosChimpAudioProcessor::onParameterUpdated(const PluginParameter *paramet
     }
 }
 
-void ChaosChimpAudioProcessor::getStateInformation(MemoryBlock &destData) {
-    XmlElement xml(getName());
-    for(int i = 0; i < getNumParameters(); i++) {
-        PluginParameter *parameter = parameters[i];
-        xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
-    }
-}
-
-void ChaosChimpAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
-    ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    if(xmlState != 0 && xmlState->hasTagName(getName())) {
-        for(int i = 0; i < getNumParameters(); i++) {
-            PluginParameter *parameter = parameters[i];
-            if(xmlState->hasAttribute(parameter->getSafeName().c_str())) {
-                parameters.set(parameter, xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
-            }
-        }
-    }
+AudioProcessorEditor *ChaosChimpAudioProcessor::createEditor() {
+    return new ChaosChimpMainEditor(this, parameters, Resources::getCache());
 }
 
 AudioProcessor *JUCE_CALLTYPE createPluginFilter() {

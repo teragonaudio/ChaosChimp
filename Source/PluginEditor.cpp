@@ -27,7 +27,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-ChaosChimpMainEditor::ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache* r)
+ChaosChimpMainEditor::ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ConcurrentParameterSet &p, teragon::ResourceCache* r)
     : AudioProcessorEditor(ownerFilter), parameters(p), resources(r)
 {
     addAndMakeVisible (dropoutsButton = new teragon::PushButton (parameters,
@@ -179,7 +179,7 @@ void ChaosChimpMainEditor::resized()
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ChaosChimpMainEditor" componentName=""
-                 parentClasses="public AudioProcessorEditor" constructorParams="AudioProcessor* ownerFilter, teragon::ThreadsafePluginParameterSet &amp;p, teragon::ResourceCache* r"
+                 parentClasses="public AudioProcessorEditor" constructorParams="AudioProcessor* ownerFilter, teragon::ConcurrentParameterSet &amp;p, teragon::ResourceCache* r"
                  variableInitialisers="AudioProcessorEditor(ownerFilter), parameters(p), resources(r)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="454" initialHeight="235">
