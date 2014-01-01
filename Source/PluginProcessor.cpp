@@ -20,7 +20,7 @@ ChaosChimpAudioProcessor::ChaosChimpAudioProcessor() : TeragonPluginBase(), Para
     parameters.add(new BooleanParameter(kParamAudioDropoutsEnabled, true));
     parameters.add(new BooleanParameter(kParamCpuHogEnabled, true));
     parameters.add(new BooleanParameter(kParamCrasherEnabled, false));
-    parameters.add(new BooleanParameter(kParamFeedbackEnabled, true));
+    parameters.add(new BooleanParameter(kParamFeedbackEnabled, false));
     parameters.add(new BooleanParameter(kParamMemoryLeakerEnabled, true));
     parameters.add(new VoidParameter(kParamPanic));
 
