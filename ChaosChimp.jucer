@@ -13,44 +13,54 @@
               pluginTailLength="0" includeBinaryInAppConfig="1">
   <MAINGROUP id="vD5tJ3" name="ChaosChimp">
     <GROUP id="{6298453F-AB8A-CA51-B3C1-6B3F74180E21}" name="Components">
-      <GROUP id="{E9C96BBC-3006-5458-0CD5-6A0A61637A98}" name="PluginParameters">
-        <GROUP id="{5C04FE82-DBC1-0934-6100-5E65ECED4EBA}" name="include">
-          <GROUP id="{6E9B5EE4-966C-A606-C744-E3A2A207B1FC}" name="readerwriterqueue">
-            <FILE id="ZToC5D" name="atomicops.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/atomicops.h"/>
-            <FILE id="HXjYVb" name="readerwriterqueue.h" compile="0" resource="0"
+      <GROUP id="{1BBE6777-213A-4E7A-8895-9B7ECD78E2FC}" name="Plugin">
+        <GROUP id="{D9879915-C31D-12E2-71D4-67B56E5EDEB7}" name="arduino-base64">
+          <FILE id="ovEEn2" name="Base64.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Plugin/arduino-base64/Base64.cpp"/>
+          <FILE id="KLJkGq" name="Base64.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Plugin/arduino-base64/Base64.h"/>
+        </GROUP>
+        <FILE id="F8HPN3" name="TeragonPluginBase.cpp" compile="1" resource="0"
+              file="Third-Party/TeragonGuiComponents/Components/Plugin/TeragonPluginBase.cpp"/>
+        <FILE id="RP65EH" name="TeragonPluginBase.h" compile="0" resource="0"
+              file="Third-Party/TeragonGuiComponents/Components/Plugin/TeragonPluginBase.h"/>
+      </GROUP>
+      <GROUP id="{72318DF7-02E4-6122-C39E-7F4C5F00703C}" name="PluginParameters">
+        <GROUP id="{776B379A-69BD-D94A-1F4A-61B1A10FA2F6}" name="include">
+          <GROUP id="{08682676-1B5C-0D30-0A84-A9AFAC31DA04}" name="readerwriterqueue">
+            <FILE id="ZuIebc" name="atomicops.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/atomicops.h"/>
+            <FILE id="cQPtiK" name="readerwriterqueue.h" compile="0" resource="0"
                   file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/readerwriterqueue.h"/>
           </GROUP>
-          <GROUP id="{7B63B3D2-03B5-C943-89A2-C4EC6E1C4A93}" name="tinythread">
-            <GROUP id="{3BBB27E6-F762-4F1D-3ECB-B0577F1FE345}" name="source">
-              <FILE id="nZq2JQ" name="fast_mutex.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/fast_mutex.h"/>
-              <FILE id="UKln7x" name="tinythread.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp"/>
-              <FILE id="Rqb6QP" name="tinythread.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.h"/>
+          <GROUP id="{CE575EDC-BBA6-586F-A5CD-150EDB11ED7E}" name="tinythread">
+            <GROUP id="{69813B94-CF19-B193-7C80-FF49D06DC68F}" name="source">
+              <FILE id="DFoAhM" name="fast_mutex.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/fast_mutex.h"/>
+              <FILE id="zjI3YQ" name="tinythread.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp"/>
+              <FILE id="tP0enX" name="tinythread.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.h"/>
             </GROUP>
           </GROUP>
-          <FILE id="mBukHg" name="BooleanParameter.h" compile="0" resource="0"
+          <FILE id="EAqHYF" name="BlobParameter.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/BlobParameter.h"/>
+          <FILE id="Y6dDtK" name="BooleanParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/BooleanParameter.h"/>
-          <FILE id="uE6hEf" name="DecibelParameter.h" compile="0" resource="0"
+          <FILE id="rctmH5" name="ConcurrentParameterSet.h" compile="0" resource="0"
+                file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/ConcurrentParameterSet.h"/>
+          <FILE id="LSP0Ca" name="DataParameter.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/DataParameter.h"/>
+          <FILE id="zVrgQd" name="DecibelParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/DecibelParameter.h"/>
-          <FILE id="PBvans" name="Event.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/Event.h"/>
-          <FILE id="J44YWn" name="EventDispatcher.h" compile="0" resource="0"
+          <FILE id="LHHVLO" name="Event.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/Event.h"/>
+          <FILE id="n3tE4V" name="EventDispatcher.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/EventDispatcher.h"/>
-          <FILE id="AF4wzX" name="FloatParameter.h" compile="0" resource="0"
+          <FILE id="krc2qQ" name="FloatParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FloatParameter.h"/>
-          <FILE id="uEmbR7" name="FrequencyParameter.h" compile="0" resource="0"
+          <FILE id="oobVkI" name="FrequencyParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FrequencyParameter.h"/>
-          <FILE id="ztrcmd" name="IntegerParameter.h" compile="0" resource="0"
+          <FILE id="E3MyEs" name="IntegerParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/IntegerParameter.h"/>
-          <FILE id="JoOsAj" name="PluginParameter.h" compile="0" resource="0"
-                file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameter.h"/>
-          <FILE id="oLn38j" name="PluginParameters.h" compile="0" resource="0"
+          <FILE id="jhqUsQ" name="Parameter.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/Parameter.h"/>
+          <FILE id="ZxTChQ" name="ParameterSet.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/ParameterSet.h"/>
+          <FILE id="TdOePC" name="PluginParameters.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameters.h"/>
-          <FILE id="fTYFcF" name="PluginParameterSet.h" compile="0" resource="0"
-                file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameterSet.h"/>
-          <FILE id="qbae6v" name="StringParameter.h" compile="0" resource="0"
+          <FILE id="lZ4iog" name="StringParameter.h" compile="0" resource="0"
                 file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/StringParameter.h"/>
-          <FILE id="Yor1QZ" name="ThreadsafePluginParameterSet.h" compile="0"
-                resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/ThreadsafePluginParameterSet.h"/>
-          <FILE id="lHw72P" name="VoidParameter.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/VoidParameter.h"/>
+          <FILE id="JtrT3t" name="VoidParameter.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/PluginParameters/include/VoidParameter.h"/>
         </GROUP>
       </GROUP>
       <GROUP id="{70A09384-AC9D-F8E2-9825-40D8A248B5F8}" name="Source">
