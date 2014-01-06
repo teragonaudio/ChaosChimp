@@ -1,12 +1,23 @@
 /*
-  ==============================================================================
-
-    ChaosProvider.h
-    Created: 5 Mar 2013 11:10:08pm
-    Author:  nik
-
-  ==============================================================================
-*/
+ * Copyright (c) 2013 - Teragon Audio LLC
+ *
+ * Permission is granted to use this software under the terms of either:
+ * a) the GPL v2 (or any later version)
+ * b) the Affero GPL v3
+ *
+ * Details of these licenses can be found at: www.gnu.org/licenses
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * This software uses the JUCE library.
+ *
+ * To release a closed-source product which uses JUCE, commercial licenses are
+ * available: visit www.juce.com for more information.
+ */
 
 #ifndef __CHAOSPROVIDER_H_7D39C974__
 #define __CHAOSPROVIDER_H_7D39C974__
@@ -15,14 +26,15 @@
 #define random rand
 #endif
 
-class ChaosProvider
-{
+class ChaosProvider {
 public:
     ChaosProvider() {}
+
     virtual ~ChaosProvider() {}
 
     virtual void doChaos(float *channelData, int numSamples) = 0;
-    virtual void reset() {};
+
+    virtual void reset() {}
 };
 
 #endif  // __CHAOSPROVIDER_H_7D39C974__
