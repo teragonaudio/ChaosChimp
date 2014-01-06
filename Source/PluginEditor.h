@@ -1,30 +1,48 @@
 /*
   ==============================================================================
 
-  This is an automatically generated file created by the Jucer!
-
-  Creation date:  5 Mar 2013 11:28:35pm
+  This is an automatically generated GUI class created by the Introjucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Jucer version: 1.12
+  Created with Introjucer version: 3.1.0
 
   ------------------------------------------------------------------------------
 
-  The Jucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-6 by Raw Material Software ltd.
+  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  Copyright 2004-13 by Raw Material Software Ltd.
 
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
-#define __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
+#ifndef __JUCE_HEADER_761AEE8ADC62D991__
+#define __JUCE_HEADER_761AEE8ADC62D991__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "PluginProcessor.h"
+/*
+ * Copyright (c) 2013 - Teragon Audio LLC
+ *
+ * Permission is granted to use this software under the terms of either:
+ * a) the GPL v2 (or any later version)
+ * b) the Affero GPL v3
+ *
+ * Details of these licenses can be found at: www.gnu.org/licenses
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * This software uses the JUCE library.
+ *
+ * To release a closed-source product which uses JUCE, commercial licenses are
+ * available: visit www.juce.com for more information.
+ */
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "TeragonGuiComponents.h"
 //[/Headers]
 
 
@@ -41,7 +59,7 @@ class ChaosChimpMainEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    ChaosChimpMainEditor (ChaosChimpAudioProcessor* ownerFilter);
+    ChaosChimpMainEditor (AudioProcessor* ownerFilter, teragon::ConcurrentParameterSet &p, teragon::ResourceCache* r);
     ~ChaosChimpMainEditor();
 
     //==============================================================================
@@ -51,13 +69,31 @@ public:
     void paint (Graphics& g);
     void resized();
 
+    // Binary resources:
+    static const char* background_png;
+    static const int background_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    teragon::ConcurrentParameterSet &parameters;
+    teragon::ResourceCache *resources;
     //[/UserVariables]
 
     //==============================================================================
+    ScopedPointer<teragon::PushButton> dropoutsButton;
+    ScopedPointer<teragon::PushButton> cpuHogButton;
+    ScopedPointer<teragon::PushButton> crashButton;
+    ScopedPointer<teragon::PushButton> feedbackButton;
+    ScopedPointer<teragon::PushButton> eatMemoryButton;
+    ScopedPointer<teragon::IndicatorLight> chaosActiveLight;
+    ScopedPointer<teragon::ToggleButton> panicButton;
+    ScopedPointer<teragon::ImageKnobSmall> probabilityKnob;
+    ScopedPointer<teragon::ImageKnobSmall> durationKnob;
+    ScopedPointer<teragon::ImageKnobSmall> cooldownKnob;
+    ScopedPointer<teragon::StatusBar> statusBar;
+    ScopedPointer<teragon::ParameterLabel> versionLabel;
+    Image cachedImage_background_png;
 
 
     //==============================================================================
@@ -67,4 +103,4 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCER_HEADER_CHAOSCHIMPMAINEDITOR_PLUGINEDITOR_FF51C9F2__
+#endif   // __JUCE_HEADER_761AEE8ADC62D991__
