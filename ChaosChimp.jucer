@@ -143,7 +143,8 @@
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="Third-Party/vstsdk2.4"
-                extraCompilerFlags="" extraDefs="ENABLE_MULTITHREADED=1">
+                extraCompilerFlags="-std=c++11 -I../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include -I../../Third-Party/TeragonGuiComponents/Components/Plugin -I../../Third-Party/TeragonGuiComponents/Components/Source"
+                extraDefs="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug-i386" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
                        targetName="ChaosChimp" linuxArchitecture="-m32" binaryPath="Builds/Linux/Debug-i386"/>
@@ -192,7 +193,8 @@
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
+    <VS2013 targetFolder="Builds/VisualStudio2013" vstFolder="Third-Party\vstsdk2.4"
+            extraCompilerFlags="/I ../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include /I ../../Third-Party/TeragonGuiComponents/Components/Plugin /I ../../Third-Party/TeragonGuiComponents/Components/Source">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="ChaosChimp"/>
